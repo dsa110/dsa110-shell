@@ -3,3 +3,11 @@
 [dsa110-issues]
 checkout =
     git clone git@github.com:dsa110/dsa110-issues.git
+
+[SNAP_control]
+checkout =
+    git clone git@github.com:dsa110/SNAP_control.git
+
+[DSA2000-Whitepaper-Simulation]
+checkout =
+    git clone git@github.com:dsa110/DSA2000-Whitepaper-Simulation.git
