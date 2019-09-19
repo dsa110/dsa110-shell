@@ -1,5 +1,9 @@
 # myrepos config file for DSA-110 Project
 
+[dsa110-antpos]
+checkout =
+    git clone git@github.com:dsa110/dsa110-antpos.git
+    
 [dsa110-issues]
 checkout =
     git clone git@github.com:dsa110/dsa110-issues.git
@@ -11,3 +15,15 @@ checkout =
 [DSA2000-Whitepaper-Simulation]
 checkout =
     git clone git@github.com:dsa110/DSA2000-Whitepaper-Simulation.git
+
+[mcant-py]
+checkout =
+    git clone git@github.com:dsa110/mcant-py.git
+
+[dsalabjack-py]
+checkout =
+    git clone git@github.com:dsa110/dsalabjack-py.git
+
+[dsa110-caltest]
+checkout =
+    git clone git@github.com:dsa110/dsa110-caltest.git
