@@ -1,5 +1,21 @@
 # myrepos config file for DSA-110 Project
 
+[dsa11-scheduler]
+checkout =
+    git clone git@github.com:dsa110/dsa110-scheduler.git
+
+[dsa110-controlscripts]
+checkout =
+    git clone git@github.com:dsa110/dsa110-controlscripts.git
+    
+[dsa110-T2]
+checkout =
+    git clone git@github.com:dsa110/dsa110-T2.git
+
+[dsa110-alignment]
+checkout =
+    git clone git@github.com:dsa110/dsa110-alignment.git
+
 [dsa110-antpos]
 checkout =
     git clone git@github.com:dsa110/dsa110-antpos.git
@@ -27,3 +43,11 @@ checkout =
 [dsa110-caltest]
 checkout =
     git clone git@github.com:dsa110/dsa110-caltest.git
+
+[dsa110-xengine]
+checkout =
+    git clone git@github.com:dsa110/dsa110-xengine.git
+
+[dsa110-pyutils]
+checkout =
+    git clone git@github.com:dsa110/dsa110-pyutils.git
