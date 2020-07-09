@@ -1,9 +1,5 @@
 # myrepos config file for DSA-110 Project
 
-[dsa11-scheduler]
-checkout =
-    git clone git@github.com:dsa110/dsa110-scheduler.git
-
 [dsa110-controlscripts]
 checkout =
     git clone git@github.com:dsa110/dsa110-controlscripts.git
@@ -51,3 +47,7 @@ checkout =
 [dsa110-pyutils]
 checkout =
     git clone git@github.com:dsa110/dsa110-pyutils.git
+
+[xGPU]
+checkout =
+    git clone https://github.com/GPU-correlators/xGPU.git
