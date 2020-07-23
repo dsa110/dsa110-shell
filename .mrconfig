@@ -1,5 +1,11 @@
 # myrepos config file for DSA-110 Project
 
+[dsa110-psrdada]
+checkout =
+    git clone git@github.com:dsa110/dsa110-psrdada.git
+    cd dsa110-psrdada
+    git checkout -b local_dsa1.0.0 dsa1.0.0
+
 [dsa110-xGPU]
 checkout =
     git clone git@github.com:dsa110/dsa110-xGPU.git
