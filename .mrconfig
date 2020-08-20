@@ -1,5 +1,12 @@
 # myrepos config file for DSA-110 Project
 
+
+[dsa110-tftpy]
+checkout =
+    git clone git@github.com:dsa110/dsa110-tftpy.git
+    cd dsa110-tftpy
+    git checkout -b local_0.6.3_fork 0.6.3_fork
+
 [dsa110-sigproc]
 checkout =
     git clone git@github.com:dsa110/dsa110-sigproc.git
