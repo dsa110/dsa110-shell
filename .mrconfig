@@ -76,3 +76,11 @@ checkout =
 [xGPU]
 checkout =
     git clone https://github.com/GPU-correlators/xGPU.git
+
+[dsa110-calib]
+checkout =
+    git clone git@github.com:dsa110/dsa110-calib.git
+
+[dsa110-meridian-fs]
+checkout =
+    git clone git@github.com:dsa110/dsa110-meridian-fs.git
