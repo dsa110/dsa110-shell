@@ -84,3 +84,7 @@ checkout =
 [dsa110-meridian-fs]
 checkout =
     git clone git@github.com:dsa110/dsa110-meridian-fs.git
+
+[psrdada-python]
+checkout =
+    git clone git@github.com:dsa110/psrdada-python.git
