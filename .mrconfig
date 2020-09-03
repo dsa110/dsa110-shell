@@ -68,6 +68,9 @@ checkout =
 [dsa110-xengine]
 checkout =
     git clone git@github.com:dsa110/dsa110-xengine.git
+    cd dsa110-xengine
+    git checkout -b v0.9
+    git pull origin v0.9
 
 [dsa110-pyutils]
 checkout =
