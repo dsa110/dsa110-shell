@@ -52,9 +52,9 @@ checkout =
 checkout =
     git clone git@github.com:dsa110/SNAP_control.git
 
-[DSA2000-Whitepaper-Simulation]
-checkout =
-    git clone git@github.com:dsa110/DSA2000-Whitepaper-Simulation.git
+#[DSA2000-Whitepaper-Simulation]
+#checkout =
+#    git clone git@github.com:dsa110/DSA2000-Whitepaper-Simulation.git
 
 [mcant-py]
 checkout =
@@ -97,3 +97,12 @@ checkout =
 [psrdada-python]
 checkout =
     git clone git@github.com:dsa110/psrdada-python.git
+    
+[dsa110-mbheimdall]
+checkout =
+    git clone git@github.com:dsa110/dsa110-mbheimdall.git
+    cd dsa110-mbheimdall
+    git checkout -b vr/dev
+    git pull origin vr/dev
+
+    
