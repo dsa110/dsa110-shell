@@ -99,7 +99,7 @@ checkout =
 checkout =
     git clone git@github.com:dsa110/dsa110-meridian-fs.git
     cd dsa110-meridian-fs
-    git checkout -b development
+    git checkout -b development origin/development
     git pull origin development
 
 [psrdada-python]
@@ -110,7 +110,7 @@ checkout =
 checkout =
     git clone git@github.com:dsa110/dsa110-mbheimdall.git
     cd dsa110-mbheimdall
-    git checkout -b vr/dev
+    git checkout -b vr/dev origin/vr/dev
     git pull origin vr/dev
 
     
