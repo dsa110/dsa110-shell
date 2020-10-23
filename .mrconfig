@@ -113,4 +113,8 @@ checkout =
     git checkout -b vr/dev origin/vr/dev
     git pull origin vr/dev
 
+[pyuvdata]
+checkout = 
+    git clone git@github.com:dsa110/pyuvdata.git
+
     
