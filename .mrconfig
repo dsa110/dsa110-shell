@@ -1,5 +1,9 @@
 # myrepos config file for DSA-110 Project
 
+[dsa110-cnf]
+checkout =
+    git clone git@github.com:dsa110/dsa110-cnf.git
+
 [dsa110-scheduler]
 checkout =
     git clone git@github.com:dsa110/dsa110-scheduler.git
