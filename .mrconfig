@@ -4,6 +4,10 @@
 checkout =
     git clone git@github.com:dsa110/dsa110-cnf.git
 
+[heim_cand_plotter]
+checkout =
+    git clone git@github.com:dsa110/heim_cand_plotter.git
+
 [dsa110-scheduler]
 checkout =
     git clone git@github.com:dsa110/dsa110-scheduler.git
