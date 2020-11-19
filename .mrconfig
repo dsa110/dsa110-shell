@@ -99,9 +99,9 @@ checkout =
 checkout =
     git clone https://github.com/dsa110/dsa110-pyutils.git
 
-[xGPU]
-checkout =
-    git clone https://github.com/GPU-correlators/xGPU.git
+#[xGPU]
+#checkout =
+#    git clone https://github.com/GPU-correlators/xGPU.git
 
 [dsa110-calib]
 checkout =
@@ -119,8 +119,8 @@ checkout =
 checkout =
     git clone https://github.com/dsa110/dsa110-mbheimdall.git
     cd dsa110-mbheimdall
-    git checkout -b vr/dev origin/vr/dev
-    git pull origin vr/dev
+    git checkout -b test_online origin/test_online
+    git pull origin test_online
 
 [pyuvdata]
 checkout = 
