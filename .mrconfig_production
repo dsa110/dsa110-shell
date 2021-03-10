@@ -1,0 +1,132 @@
+# myrepos config file for DSA-110 Project
+
+[dsa110-cnf]
+checkout =
+    git clone https://github.com/dsa110/dsa110-cnf.git
+
+[heim_cand_plotter]
+checkout =
+    git clone https://github.com/dsa110/heim_cand_plotter.git
+
+[dsa110-scheduler]
+checkout =
+    git clone https://github.com/dsa110/dsa110-scheduler.git
+
+[dsa110-vis]
+checkout =
+    git clone https://github.com/dsa110/dsa110-vis.git
+
+[dsa110-hwmc]
+checkout =
+    git clone https://github.com/dsa110/dsa110-hwmc.git
+
+[dsa110-powersnap]
+checkout =
+    git clone https://github.com/dsa110/dsa110-powersnap.git
+
+[dsa110-tftpy]
+checkout =
+    git clone https://github.com/dsa110/dsa110-tftpy.git
+    cd dsa110-tftpy
+    git checkout -b local_0.6.3_fork 0.6.3_fork
+
+[dsa110-sigproc]
+checkout =
+    git clone https://github.com/dsa110/dsa110-sigproc.git
+    cd dsa110-sigproc
+    git checkout -b local_dsa1.0.0 dsa1.0.0
+
+[dsa110-psrdada]
+checkout =
+    git clone https://github.com/dsa110/dsa110-psrdada.git
+    cd dsa110-psrdada
+    git checkout -b local_dsa1.0.0 dsa1.0.0
+
+[dsa110-xGPU]
+checkout =
+    git clone https://github.com/dsa110/dsa110-xGPU.git
+    cd dsa110-xGPU
+    git checkout -b local_dsa1.1.0 dsa1.1.0
+
+[dsa110-controlscripts]
+checkout =
+    git clone https://github.com/dsa110/dsa110-controlscripts.git
+    
+[dsa110-T2]
+checkout =
+    git clone https://github.com/dsa110/dsa110-T2.git
+
+[dsa110-alignment]
+checkout =
+    git clone https://github.com/dsa110/dsa110-alignment.git
+
+[dsa110-antpos]
+checkout =
+    git clone https://github.com/dsa110/dsa110-antpos.git
+    
+[dsa110-issues]
+checkout =
+    git clone https://github.com/dsa110/dsa110-issues.git
+
+[SNAP_control]
+checkout =
+    git clone https://github.com/dsa110/SNAP_control.git
+
+#[DSA2000-Whitepaper-Simulation]
+#checkout =
+#    git clone https://github.com/dsa110/DSA2000-Whitepaper-Simulation.git
+
+[mcant-py]
+checkout =
+    git clone https://github.com/dsa110/mcant-py.git
+
+[dsalabjack-py]
+checkout =
+    git clone https://github.com/dsa110/dsalabjack-py.git
+
+[dsa110-caltest]
+checkout =
+    git clone https://github.com/dsa110/dsa110-caltest.git
+
+[dsa110-xengine]
+checkout =
+    git clone https://github.com/dsa110/dsa110-xengine.git
+    cd dsa110-xengine
+    git checkout -b v0.9
+    git pull origin v0.9
+
+[dsa110-pyutils]
+checkout =
+    git clone https://github.com/dsa110/dsa110-pyutils.git
+    cd dsa110-pyutils
+    git checkout v2.8.0
+    pip install .
+
+#[xGPU]
+#checkout =
+#    git clone https://github.com/GPU-correlators/xGPU.git
+
+[dsa110-calib]
+checkout =
+    git clone https://github.com/dsa110/dsa110-calib.git
+
+[dsa110-meridian-fs]
+checkout =
+    git clone https://github.com/dsa110/dsa110-meridian-fs.git
+
+[psrdada-python]
+checkout =
+    git clone https://github.com/dsa110/psrdada-python.git
+    
+[dsa110-mbheimdall]
+checkout =
+    git clone https://github.com/dsa110/dsa110-mbheimdall.git
+    cd dsa110-mbheimdall
+    git checkout -b test_online origin/test_online
+    git pull origin test_online
+
+[pyuvdata]
+checkout = 
+    git clone https://github.com/dsa110/pyuvdata.git
+
+    
