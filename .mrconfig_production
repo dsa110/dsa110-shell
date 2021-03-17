@@ -32,7 +32,7 @@ checkout =
     git clone https://github.com/dsa110/dsa110-xGPU.git
 update =
     git checkout dsa1.1.0
-    cd src && make && make install
+    cd src && make && sudo make install
 
 [dsa110-T2]
 checkout =
