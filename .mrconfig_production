@@ -98,7 +98,7 @@ checkout =
 [dsa110-pyutils]
 checkout =
     git clone https://github.com/dsa110/dsa110-pyutils.git
-    cd dsa110-pyutils
+update =
     git checkout v2.8.0
     pip install .
 
