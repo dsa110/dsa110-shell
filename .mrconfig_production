@@ -68,12 +68,6 @@ update =
 install =
     pip install .
 
-[dsalabjack-py]
-checkout =
-    git clone https://github.com/dsa110/dsalabjack-py.git
-    cd dsalabjack-py
-    git checkout v1.0.2    
-
 [dsa110-xengine]
 checkout =
     git clone https://github.com/dsa110/dsa110-xengine.git
