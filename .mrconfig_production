@@ -18,6 +18,7 @@ checkout =
     cd dsa110-sigproc
     git checkout v100.0.0    
 update =
+    git fetch --all
     git checkout v100.0.0
 install =
     make && sudo make install
@@ -28,6 +29,7 @@ checkout =
     cd dsa110-psrdada
     git checkout v100.0.0
 update =
+    git fetch --all
     git checkout v100.0.0
 install =
     make && sudo make install
@@ -38,6 +40,7 @@ checkout =
     cd dsa110-xGPU
     git checkout v100.1.0
 update =
+    git fetch --all
     git checkout v100.1.0
 install =
     cd src && make && sudo make install
@@ -48,6 +51,7 @@ checkout =
     cd dsa110-T2
     git checkout v2.0.0
 update =
+    git fetch --all
     git checkout v2.0.0
 install =
     pip install -r requirements.txt
@@ -59,6 +63,7 @@ checkout =
     cd dsa110-antpos
     git checkout v1.0.0
 update =
+    git fetch --all
     git checkout v1.0.0
 install =
     pip install .
@@ -75,6 +80,7 @@ checkout =
     cd dsa110-xengine
     git checkout v2.0.0
 update =
+    git fetch --all
     git checkout v2.0.0
 install =
     cd src && make clean && make
@@ -85,6 +91,7 @@ checkout =
     cd dsa110-pyutils
     git checkout v2.8.3
 update =
+    git fetch --all
     git checkout v2.8.3
 install =
     pip install .
@@ -95,6 +102,7 @@ checkout =
     cd dsa110-calib
     git checkout v2.3.0-rc1
 update =
+    git fetch --all
     git checkout v2.3.0-rc1
 install =
     pip install .
@@ -105,6 +113,7 @@ checkout =
     cd dsa110-meridian
     git checkout v1.1.0
 update =
+    git fetch --all
     git checkout v1.1.0
 install =
     pip install .
@@ -115,6 +124,7 @@ checkout =
     cd dsa110-mbheimdall
     git checkout v1.0.0-rc1
 update =
+    git fetch --all
     git checkout v1.0.0-rc1
 install =
     ./configure --prefix=/home/ubuntu/proj/dsa110-shell/dsa110-mbheimdall --with-thrust-dir=/usr/local/thrust-1.8.1 --with-cuda-dir=/usr/local/cuda && make clean && ./configure --prefix=/home/ubuntu/proj/dsa110-shell/dsa110-mbheimdall --with-thrust-dir=/usr/local/thrust-1.8.1 --with-cuda-dir=/usr/local/cuda && make && make install
@@ -125,6 +135,7 @@ checkout =
     cd pyuvdata
     git checkout v100.0.0-rc1
 update =
+    git fetch --all
     git checkout v100.0.0-rc1
 install =
     pip install .
