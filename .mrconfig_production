@@ -94,5 +94,5 @@ update =
 checkout = 
     git clone https://github.com/dsa110/pyuvdata.git
 update =
-    git checkout dsa1.0.0
+    git checkout dsa1.0.0-rc1
     pip install .
