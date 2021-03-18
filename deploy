@@ -1,0 +1,92 @@
+#!/bin/bash
+
+# install versioned repos into production system using myrepos shell.
+
+function m_describe() {
+    echo "m_describe"
+    host=$1
+    cmd="cd /home/ubuntu/proj/dsa110-shell && pwd && mr --trust-all -c .mrconfig_production run git describe"
+    #cmd="cd /home/ubuntu/proj/dsa110-shell && pwd"
+    echo "ssh -q ubuntu@$host $cmd"
+    out=`ssh -q ubuntu@$host "$cmd"` > /dev/null 2>&1
+    echo $out
+}
+
+function m_update() {
+    host=$1
+    version="$2"
+    cmd="cd /home/ubuntu/proj/dsa110-shell && git fetch --tags --all && git checkout $version && mr --trust-all -c .mrconfig_production update"
+    echo "ssh -q ubuntu@$host $cmd"
+    out=`ssh -q ubuntu@$host "$cmd"`
+}
+
+function m_install() {
+    host=$1
+    version="$2"
+    cmd="cd /home/ubuntu/proj/dsa110-shell && git fetch --tags --all && git checkout $version && mr --trust-all -c .mrconfig_production install"
+    echo "ssh -q ubuntu@$host $cmd"
+    out=`ssh -q ubuntu@$host "$cmd"`
+}
+
+function m_deploy() {
+    d_host=$1
+    d_ver=$2
+    m_update $d_host $d_ver
+    m_install $d_host $d_ver    
+}
+
+function m_process() {
+    l_comm=$1
+    l_t_host=$2
+    l_ver=$3
+
+    if [[ "x$l_comm" == "xinstall" ]]; then
+        m_deploy $l_t_host $l_ver
+    elif [[ "x$l_comm" == "xcurrent" ]]; then
+        m_describe $l_t_host
+    else
+        usage
+    fi
+}
+
+function host() {
+    prefix=$1
+    suffix=$2
+    myIdx=$3
+    if [[ $myIdx -lt 10 ]]; then
+        myIdx="0$myIdx"
+    fi
+    echo ${prefix}${myIdx}$suffix
+}
+
+function usage() {
+    echo "$0 [install | current] [all | host] <version>"
+    echo "delploy shell at <version> on hosts"
+    echo "Ex. $0 install all v2.3.0-rc1"
+    echo "Ex. $0 current dsa-storage"
+}
+
+# ============== Main Entry ==================
+comm=$1
+t_host=$2
+ver=$3
+
+if [[ "x$1" == "x" ]]; then
+    usage
+    exit 1
+elif [[ "x$t_host" == "xall" ]]; then
+    for idx in {0..22}; do
+        host="`host 'corr' 'sas.pvt' $idx`"
+        echo $host
+        m_process $comm $host $ver
+    done
+    # special machines
+    mach="antservice.ant.pvt webserveruiservice.sas.pvt"
+    for m in $mach; do
+        echo $m
+        m_process $comm $m $2
+    done
+else
+    echo $1
+    m_process $comm $t_host $ver
+fi
