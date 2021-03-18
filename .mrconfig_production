@@ -3,26 +3,29 @@
 [dsa110-cnf]
 checkout =
     git clone https://github.com/dsa110/dsa110-cnf.git
-update =
-    git checkout v1.0.0
-    
+    cd dsa110-cnf
+    git checkout v1.0.0    
 
 [dsa110-hwmc]
 checkout =
     git clone https://github.com/dsa110/dsa110-hwmc.git
-update =
-    git checkout v1.0.0-rc1
+    cd dsa110-hwmc
+    git checkout v1.0.0-rc1    
     
 [dsa110-sigproc]
 checkout =
     git clone https://github.com/dsa110/dsa110-sigproc.git
-update = 
+    cd dsa110-sigproc
+    git checkout v100.0.0    
+update =
     git checkout v100.0.0
     make && sudo make install
 
 [dsa110-psrdada]
 checkout =
     git clone https://github.com/dsa110/dsa110-psrdada.git
+    cd dsa110-psrdada
+    git checkout v100.0.0
 update =
     git checkout v100.0.0
     make && sudo make install
@@ -30,6 +33,8 @@ update =
 [dsa110-xGPU]
 checkout =
     git clone https://github.com/dsa110/dsa110-xGPU.git
+    cd dsa110-xGPU
+    git checkout v100.1.0
 update =
     git checkout v100.1.0
     cd src && make && sudo make install
@@ -37,6 +42,8 @@ update =
 [dsa110-T2]
 checkout =
     git clone https://github.com/dsa110/dsa110-T2.git
+    cd dsa110-T2
+    git checkout v2.0.0
 update =
     git checkout v2.0.0
     pip install -r requirements.txt
@@ -45,6 +52,8 @@ update =
 [dsa110-antpos]
 checkout =
     git clone https://github.com/dsa110/dsa110-antpos.git
+    cd dsa110-antpos
+    git checkout v1.0.0
 update =
     git checkout v1.0.0
     pip install .
@@ -52,12 +61,14 @@ update =
 [dsalabjack-py]
 checkout =
     git clone https://github.com/dsa110/dsalabjack-py.git
-update =
-    git checkout v1.0.2
+    cd dsalabjack-py
+    git checkout v1.0.2    
 
 [dsa110-xengine]
 checkout =
     git clone https://github.com/dsa110/dsa110-xengine.git
+    cd dsa110-xengine
+    git checkout v2.0.0
 update =
     git checkout v2.0.0
     cd src && make clean && make
@@ -65,6 +76,8 @@ update =
 [dsa110-pyutils]
 checkout =
     git clone https://github.com/dsa110/dsa110-pyutils.git
+    cd dsa110-pyutils
+    git checkout v2.8.0
 update =
     git checkout v2.8.0
     pip install .
@@ -72,6 +85,8 @@ update =
 [dsa110-calib]
 checkout =
     git clone https://github.com/dsa110/dsa110-calib.git
+    cd dsa110-calib
+    git checkout v2.3.0-rc1
 update =
     git checkout v2.3.0-rc1
     pip install .
@@ -79,6 +94,8 @@ update =
 [dsa110-meridian-fs]
 checkout =
     git clone https://github.com/dsa110/dsa110-meridian-fs.git
+    cd dsa110-meridian
+    git checkout v1.1.0
 update =
     git checkout v1.1.0
     pip install .
@@ -86,6 +103,8 @@ update =
 [dsa110-mbheimdall]
 checkout =
     git clone https://github.com/dsa110/dsa110-mbheimdall.git
+    cd dsa110-mbheimdall
+    git checkout v1.0.0-rc1
 update =
     git checkout v1.0.0-rc1
     ./configure --prefix=/home/ubuntu/proj/dsa110-shell/dsa110-mbheimdall --with-thrust-dir=/usr/local/thrust-1.8.1 --with-cuda-dir=/usr/local/cuda && make clean && ./configure --prefix=/home/ubuntu/proj/dsa110-shell/dsa110-mbheimdall --with-thrust-dir=/usr/local/thrust-1.8.1 --with-cuda-dir=/usr/local/cuda && make && make install
@@ -93,6 +112,8 @@ update =
 [pyuvdata]
 checkout = 
     git clone https://github.com/dsa110/pyuvdata.git
+    cd pyuvdata
+    git checkout dsa1.0.0-rc1
 update =
     git checkout dsa1.0.0-rc1
     pip install .
