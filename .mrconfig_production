@@ -105,7 +105,7 @@ update =
     git fetch --tags  --all
     git checkout v100.0.0
 install =
-    make && sudo make install
+    make && make install
 
 [dsa110-pyutils]
 checkout =
