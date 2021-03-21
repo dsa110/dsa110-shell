@@ -4,7 +4,7 @@
 checkout =
     git clone https://github.com/dsa110/dsa110-cnf.git
     cd dsa110-cnf
-    git checkout v1.0.0    
+    git checkout v1.2.0    
 
 [dsa110-hwmc]
 checkout =
@@ -49,10 +49,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-T2.git
     cd dsa110-T2
-    git checkout v2.0.0
+    git checkout 2.1.0
 update =
     git fetch --tags  --all
-    git checkout v2.0.0
+    git checkout 2.1.0
 install =
     pip install -r requirements.txt
     pip install .
@@ -72,10 +72,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-xengine.git
     cd dsa110-xengine
-    git checkout v2.0.0
+    git checkout v2.1.0
 update =
     git fetch --tags  --all
-    git checkout v2.0.0
+    git checkout v2.1.0
 install =
     cd src && make clean && make
 
@@ -83,10 +83,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-pyutils.git
     cd dsa110-pyutils
-    git checkout v2.8.3
+    git checkout v2.8.4
 update =
     git fetch --tags  --all
-    git checkout v2.8.3
+    git checkout v2.8.4
 install =
     pip install .
 
@@ -94,21 +94,21 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-calib.git
     cd dsa110-calib
-    git checkout v2.3.0-rc1
+    git checkout v2.3.0-rc2
 update =
     git fetch --tags  --all
-    git checkout v2.3.0-rc1
+    git checkout v2.3.0-rc2
 install =
     pip install .
     
 [dsa110-meridian-fs]
 checkout =
     git clone https://github.com/dsa110/dsa110-meridian-fs.git
-    cd dsa110-meridian
-    git checkout v1.1.0
+    cd dsa110-meridian-fs
+    git checkout v1.1.1
 update =
     git fetch --tags  --all
-    git checkout v1.1.0
+    git checkout v1.1.1
 install =
     pip install .
     
