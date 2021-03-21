@@ -75,7 +75,7 @@ if [[ "x$1" == "x" ]]; then
     usage
     exit 1
 elif [[ "x$t_host" == "xall" ]]; then
-    for idx in {0..22}; do
+    for idx in {1..20}; do
         host="`host 'corr' 'sas.pvt' $idx`"
         echo $host
         m_process $comm $host $ver

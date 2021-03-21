@@ -38,7 +38,7 @@ update =
     git fetch --tags  --all
     git checkout v100.0.0
 install =
-    make && sudo make install
+    autoreconf -i && ./configure --prefix=/usr/local --with-fftw3-dir=/usr/local --with-sofa-dir=/usr/local --with-sofa-include-dir=/usr/local/include --with-xgpu-dir=/usr/local --with-hwloc-dir=/usr/local CFLAGS="-fPIC" && make -j 30 && sudo make install
 
 [dsa110-xGPU]
 checkout =
@@ -85,6 +85,28 @@ update =
 install =
     cd src && make clean && make
 
+[pyuvdata]
+checkout = 
+    git clone https://github.com/dsa110/pyuvdata.git
+    cd pyuvdata
+    git checkout v100.0.0-rc1
+update =
+    git fetch --tags  --all
+    git checkout v100.0.0-rc1
+install =
+    pip install .
+
+[psrdada-python]
+checkout = 
+    git clone https://github.com/dsa110/psrdada-python
+    cd psrdada-python
+    git checkout v100.0.0
+update =
+    git fetch --tags  --all
+    git checkout v100.0.0
+install =
+    make && sudo make install
+
 [dsa110-pyutils]
 checkout =
     git clone https://github.com/dsa110/dsa110-pyutils.git
@@ -128,14 +150,3 @@ update =
     git checkout v1.0.0-rc1
 install =
     ./configure --prefix=/home/ubuntu/proj/dsa110-shell/dsa110-mbheimdall --with-thrust-dir=/usr/local/thrust-1.8.1 --with-cuda-dir=/usr/local/cuda && make clean && ./configure --prefix=/home/ubuntu/proj/dsa110-shell/dsa110-mbheimdall --with-thrust-dir=/usr/local/thrust-1.8.1 --with-cuda-dir=/usr/local/cuda && make && make install
-
-[pyuvdata]
-checkout = 
-    git clone https://github.com/dsa110/pyuvdata.git
-    cd pyuvdata
-    git checkout v100.0.0-rc1
-update =
-    git fetch --tags  --all
-    git checkout v100.0.0-rc1
-install =
-    pip install .
