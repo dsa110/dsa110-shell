@@ -5,12 +5,18 @@ checkout =
     git clone https://github.com/dsa110/dsa110-cnf.git
     cd dsa110-cnf
     git checkout v1.2.0    
+update =
+    git fetch --tags  --all
+    git checkout v1.2.0
 
 [dsa110-hwmc]
 checkout =
     git clone https://github.com/dsa110/dsa110-hwmc.git
     cd dsa110-hwmc
-    git checkout v1.0.0-rc1    
+    git checkout v1.0.0-rc1
+update =
+    git fetch --tags  --all
+    git checkout v1.0.0-rc1
     
 [dsa110-sigproc]
 checkout =
