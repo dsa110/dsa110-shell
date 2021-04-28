@@ -55,10 +55,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-T2.git
     cd dsa110-T2
-    git checkout 2.4.0-rc1
+    git checkout 2.4.1
 update =
     git fetch --tags  --all
-    git checkout 2.4.0-rc1
+    git checkout 2.4.1
 install =
     pip install -r requirements.txt
     pip install .
