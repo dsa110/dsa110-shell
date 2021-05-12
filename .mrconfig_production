@@ -67,7 +67,7 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-antpos.git
     cd dsa110-antpos
-    git checkout v1.3.0-rc1
+    git checkout v1.3.0-rc2
 update =
     git fetch --tags  --all
     git checkout v1.3.0-rc1
@@ -122,10 +122,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-calib.git
     cd dsa110-calib
-    git checkout v2.4.0-rc1
+    git checkout v2.4.0-rc2
 update =
     git fetch --tags  --all
-    git checkout v2.4.0-rc1
+    git checkout v2.4.0-rc2
 install =
     pip install .
     
@@ -133,10 +133,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-meridian-fs.git
     cd dsa110-meridian-fs
-    git checkout v1.1.1-rc1
+    git checkout v1.1.2
 update =
     git fetch --tags  --all
-    git checkout v1.1.1-rc1
+    git checkout v1.1.2
 install =
     pip install .
     
