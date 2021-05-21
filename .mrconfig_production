@@ -70,7 +70,7 @@ checkout =
     git checkout v1.3.0-rc2
 update =
     git fetch --tags  --all
-    git checkout v1.3.0-rc1
+    git checkout v1.3.0-rc2
 install =
     pip install .
 
