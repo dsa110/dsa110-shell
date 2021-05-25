@@ -111,10 +111,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-pyutils.git
     cd dsa110-pyutils
-    git checkout v2.10.0
+    git checkout v100.0.1
 update =
     git fetch --tags  --all
-    git checkout v2.10.0
+    git checkout v100.0.1
 install =
     pip install .
 
