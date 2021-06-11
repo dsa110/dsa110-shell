@@ -114,7 +114,7 @@ checkout =
     git checkout v2.11.1-nofs
 update =
     git fetch --tags  --all
-    git checkout v2.11.1
+    git checkout v2.11.1-nofs
 install =
     pip install .
 
