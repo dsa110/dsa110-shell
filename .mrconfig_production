@@ -114,10 +114,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-pyutils.git
     cd dsa110-pyutils
-    git checkout v2.11.1
+    git checkout v2.11.2-rc1
 update =
     git fetch --tags  --all
-    git checkout v2.11.1
+    git checkout v2.11.2-rc1
 install =
     pip install .
 
@@ -136,10 +136,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-meridian-fs.git
     cd dsa110-meridian-fs
-    git checkout v1.1.2
+    git checkout v1.1.2-rc1
 update =
     git fetch --tags  --all
-    git checkout v1.1.2
+    git checkout v1.1.2-rc1
 install =
     pip install .
     
