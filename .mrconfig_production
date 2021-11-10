@@ -78,12 +78,12 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-xengine.git
     cd dsa110-xengine
-    git checkout v3.0.0-rc109
+    git checkout v3.0.0-rc110
 # this is the good dsa-25 one
 #    git checkout v2.4.3
 update =
     git fetch --tags  --all
-    git	checkout v3.0.0-rc109
+    git	checkout v3.0.0-rc110
 #    git checkout v2.4.3
 install =
     cd src && make clean && make
