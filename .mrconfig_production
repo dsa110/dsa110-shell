@@ -147,10 +147,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-mbheimdall.git
     cd dsa110-mbheimdall
-    git checkout v1.2.0-rc10
+    git checkout v1.2.0-rc11
 update =
     git fetch --tags  --all
-    git checkout v1.2.0-rc10
+    git checkout v1.2.0-rc11
 install =
     make && make install
 #    ./configure --prefix=/home/ubuntu/proj/dsa110-shell/dsa110-mbheimdall --with-thrust-dir=/usr/local/thrust-1.8.1 --with-cuda-dir=/usr/local/cuda && make clean && ./configure --prefix=/home/ubuntu/proj/dsa110-shell/dsa110-mbheimdall --with-thrust-dir=/usr/local/thrust-1.8.1 --with-cuda-dir=/usr/local/cuda && make && make install
