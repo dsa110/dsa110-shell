@@ -1,5 +1,16 @@
 # myrepos config file for DSA-110 Project
 
+[astropy]
+checkout =
+    git clone https://github.com/dsa110/astropy.git
+    cd astropy
+    git checkout v4.0.6
+update =
+    git fetch --tags  --all
+    git checkout v4.0.6
+install =
+    pip install .
+
 [dsa110-cnf]
 checkout =
     git clone https://github.com/dsa110/dsa110-cnf.git
