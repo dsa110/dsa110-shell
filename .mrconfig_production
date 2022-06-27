@@ -68,10 +68,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-antpos.git
     cd dsa110-antpos
-    git checkout v1.3.0-rc2
+    git checkout v1.4.0
 update =
     git fetch --tags  --all
-    git checkout v1.3.0-rc2
+    git checkout v1.4.0
 install =
     pip install .
 
@@ -79,12 +79,12 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-xengine.git
     cd dsa110-xengine
-    git checkout v3.0.0-rc142
+    git checkout v3.0.0-rc143
 # this is the good dsa-25 one
 #    git checkout v2.4.3
 update =
     git fetch --tags  --all
-    git	checkout v3.0.0-rc142
+    git	checkout v3.0.0-rc143
 #    git checkout v2.4.3
 install =
     cd src && make clean && make
@@ -137,10 +137,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-meridian-fs.git
     cd dsa110-meridian-fs
-    git checkout v1.4.0
+    git checkout v1.5.4
 update =
     git fetch --tags  --all
-    git checkout v1.4.0
+    git checkout v1.5.4
 install =
     pip install .
     
