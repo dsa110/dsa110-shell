@@ -26,6 +26,8 @@ checkout =
 update =
     git fetch --tags  --all
     git checkout 0.7.0
+install =
+    pip install .
     
 [dsa110-sigproc]
 checkout =
@@ -134,10 +136,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-pyutils.git
     cd dsa110-pyutils
-    git checkout v2.11.1
+    git checkout v3.8.2
 update =
     git fetch --tags  --all
-    git checkout v2.11.1
+    git checkout v3.8.2
 install =
     pip install .
 
