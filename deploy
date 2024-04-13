@@ -23,7 +23,7 @@ function m_update() {
 function m_install() {
     host=$1
     version="$2"
-    cmd="cd /home/ubuntu/proj/dsa110-shell && git fetch --tags --all && git checkout $version && mr --trust-all -c .mrconfig_production install"
+    cmd="source ~/.bashrc; source ~/anaconda3/bin/activate casa38; cd /home/ubuntu/proj/dsa110-shell && git fetch --tags --all && git checkout $version && mr --trust-all -c .mrconfig_production install"
     echo "ssh -q ubuntu@$host $cmd"
     out=`ssh -q ubuntu@$host "$cmd"`
 }

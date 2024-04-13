@@ -27,7 +27,8 @@ update =
     git fetch --tags  --all
     git checkout v100.0.0
 install =
-    make && sudo make install
+    ./bootstrap && ./configure && make && sudo make install
+    sudo cp src/libsigproc.a /usr/local/lib
 
 [dsa110-psrdada]
 checkout =
@@ -79,12 +80,12 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-xengine.git
     cd dsa110-xengine
-    git checkout v3.1.0-rc13
+    git checkout v3.1.0-rc16
 # this is the good dsa-25 one
 #    git checkout v2.4.3
 update =
     git fetch --tags  --all
-    git	checkout v3.1.0-rc13
+    git	checkout v3.1.0-rc16
 #    git checkout v2.4.3
 install =
     cd src && make clean && make
