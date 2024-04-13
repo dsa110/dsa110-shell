@@ -35,6 +35,12 @@ function m_deploy() {
     m_install $d_host $d_ver    
 }
 
+function m_doupdate() {
+    d_host=$1
+    d_ver=$2
+    m_update $d_host $d_ver
+}
+
 function m_process() {
     l_comm=$1
     l_t_host=$2
@@ -44,6 +50,8 @@ function m_process() {
         m_deploy $l_t_host $l_ver
     elif [[ "x$l_comm" == "xcurrent" ]]; then
         m_describe $l_t_host
+    elif [[ "x$l_comm" == "xupdate" ]]; then
+	m_doupdate $l_t_host $l_ver
     else
         usage
     fi
@@ -60,7 +68,7 @@ function host() {
 }
 
 function usage() {
-    echo "$0 [install | current] [all | host] <version>"
+    echo "$0 [install | current | update] [all | host] <version>"
     echo "delploy shell at <version> on hosts"
     echo "Ex. $0 install all v2.3.0-rc1"
     echo "Ex. $0 current dsa-storage"
