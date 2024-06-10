@@ -10,6 +10,6 @@
 
 for corr in '03' '04' '05' '06' '07' '08' '10' '11' '12' '14' '15' '16' '18' '19' '21' '22'; do
 
-    screen -S ${corr} -dm bash -c "/home/ubuntu/proj/dsa110-shell/deploy install lxd110h${corr}.pro.pvt v3.1.0-rc24; sleep 300"
+    screen -S ${corr} -dm bash -c "/home/ubuntu/proj/dsa110-shell/deploy install lxd110h${corr}.pro.pvt v3.1.0-rc25; sleep 300"
 
 done
