@@ -138,10 +138,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-meridian-fs.git
     cd dsa110-meridian-fs
-    git checkout v1.6.2
+    git checkout v1.6.3
 update =
     git fetch --tags  --all
-    git checkout v1.6.2
+    git checkout v1.6.3
 install =
     pip install .
     
