@@ -80,12 +80,12 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-xengine.git
     cd dsa110-xengine
-    git checkout v3.1.0-rc64
+    git checkout v3.1.0-rc115
 # this is the good dsa-25 one
 #    git checkout v2.4.3
 update =
     git fetch --tags  --all
-    git	checkout v3.1.0-rc64
+    git	checkout v3.1.0-rc115
 #    git checkout v2.4.3
 install =
     cd src && make clean && make
@@ -142,6 +142,17 @@ checkout =
 update =
     git fetch --tags  --all
     git checkout v1.7.0
+install =
+    pip install .
+    
+[dsa110-nsfrb]
+checkout =
+    git clone https://github.com/dsa110/dsa110-nsfrb.git
+    cd dsa110-nsfrb
+    git checkout v1.0.1
+update =
+    git fetch --tags  --all
+    git checkout v1.0.1
 install =
     pip install .
     
