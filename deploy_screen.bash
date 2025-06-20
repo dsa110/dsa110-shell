@@ -8,13 +8,13 @@
 #
 #done
 
-#for corr in '03' '04' '05' '06' 'h07' '08' '10' '11' '12' '14' '15' '16' '18' '19' '21' '22'; do
+for corr in '01' 'h02' '03' 'h04' '05' '06' 'h07' '08' 'h09' 'h10' '11' 'h12' 'h13' '14' '15' '16' '18' '19' '21' '22'; do
 
 #for corr in '18'; do
 
-for corr in 'h02' 'h09' 'h13'; do
+#for corr in 'h02' 'h09' 'h13'; do
 	    
-    screen -S ${corr} -dm bash -c "/home/ubuntu/proj/dsa110-shell/deploy install h${corr}.pro.pvt v3.1.0-rc33; sleep 300"
+    screen -S h${corr} -dm bash -c "/home/ubuntu/proj/dsa110-shell/deploy install h${corr}.pro.pvt v3.1.0-rc34; sleep 300"
 
 done
 
