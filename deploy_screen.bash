@@ -14,7 +14,7 @@ for corr in '01' 'h02' '03' 'h04' '05' '06' 'h07' '08' 'h09' 'h10' '11' 'h12' 'h
 
 #for corr in 'h02' 'h09' 'h13'; do
 	    
-    screen -S h${corr} -dm bash -c "/home/ubuntu/proj/dsa110-shell/deploy install h${corr}.pro.pvt v3.1.0-rc34; sleep 300"
+    screen -S h${corr} -dm bash -c "/home/ubuntu/proj/dsa110-shell/deploy install h${corr}.pro.pvt v3.1.0-rc35; sleep 300"
 
 done
 

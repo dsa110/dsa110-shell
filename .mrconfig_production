@@ -149,10 +149,10 @@ install =
 checkout =
     git clone https://github.com/dsa110/dsa110-nsfrb.git
     cd dsa110-nsfrb
-    git checkout v1.0.2
+    git checkout v1.0.3
 update =
     git fetch --tags  --all
-    git checkout v1.0.2
+    git checkout v1.0.3
 install =
     pip install .
     
