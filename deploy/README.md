@@ -123,9 +123,9 @@ silently.
 `lxd110maas-artifacts.md5`. To rebuild without `lxd110maas`, serve that
 directory over HTTP and point `TARBALL_LOC` / `WEB_MAAS` at it.
 
-**Not mirrored deliberately:** `config/lxd/lxd_node.yml` — it contains the MaaS
-admin API key in cleartext over unauthenticated HTTP. That key should be
-rotated.
+**Not mirrored deliberately:** `config/lxd/lxd_node.yml` — it carries
+credentials, so it is excluded from both the mirror and this repo. Handle it
+out of band; see the private notes referenced in §5.
 
 ---
 
@@ -142,11 +142,16 @@ rotated.
 ⚠ The DR archive lives on h23's `/dataz` (raidz1, survives one disk). It is
 **not off-site**, and it does not protect against loss of h23 itself.
 
-### Secrets — deliberately NOT in git
-The archived preseeds here have `__UBUNTU_PASSWORD__` and
-`__LXD_TRUST_PASSWORD__` placeholders. Real values are in the unredacted copies
-on `dsa110maas:/etc/maas/preseeds/` and in the DR config tarball (mode 700).
-Substitute them before use. Both should be rotated, along with the MaaS API key.
+### Credentials — deliberately NOT in git
+This repository is public. The archived preseeds here carry
+`__UBUNTU_PASSWORD__` and `__LXD_TRUST_PASSWORD__` placeholders, and the
+`authorized_keys` bodies in `corrprofile.yaml` are `__REDACTED_PUBKEY__`.
+Substitute the real values, which live only on `dsa110maas` and in the
+mode-700 DR archive, before using these files.
+
+The inventory of which credential lives where — and the rotation priority
+list — is kept out of this repo, in
+`/dataz/dsa110/dr_archive/SECRETS_INVENTORY.md` (mode 600) on h23.
 
 ---
 
