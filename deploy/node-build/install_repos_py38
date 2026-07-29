@@ -1,0 +1,47 @@
+#!/bin/bash
+
+CONDA='/home/ubuntu/anaconda3/condabin/conda'
+WEB_MAAS="http://10.42.0.3/maas"
+REPODIR='/home/ubuntu/proj/dsa110-shell'
+
+echo "install_repos_py38"
+
+# activate env
+#eval "$(conda shell.bash hook)"
+#$CONDA activate casa38
+
+# Download and install casa6
+
+$CONDA env list
+
+/home/ubuntu/anaconda3/envs/casa38/bin/pip install --upgrade --extra-index-url https://go.nrao.edu/pypi casadata
+
+# ipython
+/home/ubuntu/anaconda3/envs/casa38/bin/pip install ipython
+
+# dsa110-pyutils
+cd $REPODIR/dsa110-pyutils
+#/home/ubuntu/anaconda3/envs/casa38/bin/python setup.py install
+/home/ubuntu/anaconda3/envs/casa38/bin/pip install .
+
+# dsa110-antpos
+cd $REPODIR/dsa110-antpos
+#/home/ubuntu/anaconda3/envs/casa38/bin/python setup.py install
+/home/ubuntu/anaconda3/envs/casa38/bin/pip install .
+
+# install psrdada-python
+cd $REPODIR/psrdada-python
+make && make install
+
+# dsa110-calib
+cd $REPODIR/dsa110-calib
+#/home/ubuntu/anaconda3/envs/casa38/bin/python setup.py install
+/home/ubuntu/anaconda3/envs/casa38/bin/pip install .
+
+# dsa110-meridian-fs
+cd $REPODIR/dsa110-meridian-fs
+#/home/ubuntu/anaconda3/envs/casa38/bin/python setup.py install
+/home/ubuntu/anaconda3/envs/casa38/bin/pip install .
+
+sudo chown -R ubuntu:ubuntu /home/ubuntu
+

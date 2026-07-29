@@ -1,0 +1,650 @@
+# SANITIZED FOR GIT: '__UBUNTU_PASSWORD__' and '__LXD_TRUST_PASSWORD__' are placeholders.
+# Real values live ONLY on dsa110maas:/etc/maas/preseeds/ and in the DR archive
+# at /dataz/dsa110/dr_archive/dsa110maas-config/ (mode 700). Substitute before use.
+#cloud-config
+debconf_selections:
+ maas: |
+  {{for line in str(curtin_preseed).splitlines()}}
+  {{line}}
+  {{endfor}}
+early_commands:
+{{if third_party_drivers and driver}}
+  {{py: key_string = ''.join(['\\x%x' % x for x in driver['key_binary']])}}
+  {{if driver['key_binary'] and driver['repository'] and driver['package']}}
+  driver_00_get_key: /bin/echo -en '{{key_string}}' > /tmp/maas-{{driver['package']}}.gpg
+  driver_01_add_key: ["apt-key", "add", "/tmp/maas-{{driver['package']}}.gpg"]
+  {{endif}}
+  {{if driver['repository']}}
+  driver_02_add: ["add-apt-repository", "-y", "deb {{driver['repository']}} {{node.get_distro_series()}} main"]
+  {{endif}}
+  {{if driver['package']}}
+  driver_03_update_install: ["sh", "-c", "apt-get update --quiet && apt-get --assume-yes install {{driver['package']}}"]
+  {{endif}}
+  {{if driver['module']}}
+  driver_04_load: ["sh", "-c", "depmod && modprobe {{driver['module']}} || echo 'Warning: Failed to load module: {{driver['module']}}'"]
+  {{endif}}
+{{else}}
+  driver_00: ["sh", "-c", "echo third party drivers not installed or necessary."]
+{{endif}}
+late_commands:
+  maas: [wget, '--no-proxy', {{node_disable_pxe_url|escape.json}}, '--post-data', {{node_disable_pxe_data|escape.json}}, '-O', '/dev/null']
+{{if third_party_drivers and driver}}
+  {{if driver['key_binary'] and driver['repository'] and driver['package']}}
+  driver_00_key_get: curtin in-target -- sh -c "/bin/echo -en '{{key_string}}' > /tmp/maas-{{driver['package']}}.gpg"
+  driver_02_key_add: ["curtin", "in-target", "--", "apt-key", "add", "/tmp/maas-{{driver['package']}}.gpg"]
+  {{endif}}
+  {{if driver['repository']}}
+  driver_03_add: ["curtin", "in-target", "--", "add-apt-repository", "-y", "deb {{driver['repository']}} {{node.get_distro_series()}} main"]
+  {{endif}}
+  driver_04_update_install: ["curtin", "in-target", "--", "apt-get", "update", "--quiet"]
+  {{if driver['package']}}
+  driver_05_install: ["curtin", "in-target", "--", "apt-get", "-y", "install", "{{driver['package']}}"]
+  {{endif}}
+  driver_06_depmod: ["curtin", "in-target", "--", "depmod"]
+  driver_07_update_initramfs: ["curtin", "in-target", "--", "update-initramfs", "-u"]
+{{endif}}
+  00_additionPkgs: ["curtin", "in-target", "--", "echo", "'#### Start Installing additional packages ####'"]
+  01_emacs: ["curtin", "in-target", "--", "apt", "-y", "install", "emacs25-nox"]
+  02_zfs: ["curtin", "in-target", "--", "apt", "-y", "install", "zfsutils-linux"]
+  02_bridgeutils: ["curtin", "in-target", "--", "apt", "-y", "install", "bridge-utils"]
+  02_ipmitool: ["curtin", "in-target", "--", "apt", "-y", "install", "ipmitool"]  
+  03_myrepos: ["curtin", "in-target", "--", "apt", "-y", "install", "myrepos"]
+  03_csh: ["curtin", "in-target", "--", "apt", "-y", "install", "csh"]
+  03_gcc: ["curtin", "in-target", "--", "apt", "-y", "install", "gcc"]
+  03_g++: ["curtin", "in-target", "--", "apt", "-y", "install", "g++"]
+  03_gfortran: ["curtin", "in-target", "--", "apt", "-y", "install", "gfortran"]
+  03_make: ["curtin", "in-target", "--", "apt", "-y", "install", "make"]
+  03_pne: ["curtin", "in-target", "--", "apt", "-y", "install", "prometheus-node-exporter"]
+  03_libnuma: ["curtin", "in-target", "--", "apt", "-y", "install", "libnuma-dev"]
+  03_syslogng: ["curtin", "in-target", "--", "apt", "-y", "install", "syslog-ng"]
+  03_ntp: ["curtin", "in-target", "--", "apt", "-y", "install", "ntp"]
+  04_ntp: ["curtin", "in-target", "--", "sed", "-i", "s/pool/#pool/", "/etc/ntp.conf"]
+  05_ntp0: ["curtin", "in-target", "--", "sed", "-i", "-e", "$aserver 192.168.0.10", "/etc/ntp.conf"]
+  05_ntp1: ["curtin", "in-target", "--", "sed", "-i", "-e", "$aserver ntp1.cm.pvt", "/etc/ntp.conf"]
+  05_ntp2: ["curtin", "in-target", "--", "sed", "-i", "-e", "$aserver ntp1.solar.pvt", "/etc/ntp.conf"]
+  05_ntp3: ["curtin", "in-target", "--", "sed", "-i", "-e", "$aserver ntp2.solar.pvt", "/etc/ntp.conf"]  
+  06_ntp: ["curtin", "in-target", "--", "systemctl", "enable", "ntp"]
+  07_ntp: ["curtin", "in-target", "--", "systemctl", "disable", "systemd-timesyncd"]
+  08_ntp: ["curtin", "in-target", "--", "systemctl", "stop", "systemd-timesyncd"]
+#  08_timesyncd: ["curtin", "in-target", "--", "apt", "-y", "remove", "--purge", "systemd-timesyncd"]
+  09_ntp: ["curtin", "in-target", "--", "systemctl", "start", "ntp"]
+  10_lxdrm: ["curtin", "in-target", "--", "apt", "-y", "remove", "--purge", "lxd"]
+  11_lxdar: ["curtin", "in-target", "--", "apt", "-y", "autoremove"]
+  12_create_ubuntu: ["curtin", "in-target", "--", "sh", "-c", "sudo useradd -m -d /home/ubuntu -s /bin/bash ubuntu"]
+  13_mymaas: ["curtin", "in-target", "--", "mkdir", "-p", "/home/ubuntu/proj"]
+  14_data: ["curtin", "in-target", "--", "mkdir", "-p", "/home/ubuntu/data"]
+  14_logs: ["curtin", "in-target", "--", "mkdir", "-p", "/home/ubuntu/logs"]  
+#  14_mymaas: ["curtin", "in-target", "--", "wget", "--no-check-certificate", "-r", "-P", "/home/ubuntu/proj/", "-nH", "--cut-dirs=1", "--reject", "html,gif,'index*'", "http://lxd110maas.ovro.pvt/maas"]
+#  14_mymaas: ["curtin", "in-target", "--", "wget", ,"--no-check-certificate", "-P", "/home/ubuntu/proj/", "--reject", "html,gif,'index*'", "http://lxd110maas.ovro.pvt/maas/config/lxd/lxd_cluster_first_node.yml"]
+# create ubuntu user
+#  16_set_ubuntu_password: ["sh", "-c", "echo 'ubuntu:__UBUNTU_PASSWORD__' | sudo chpasswd"]
+#  17_cat: ["sh", "-c", "cat /etc/passwd"]
+  16_owner: ["curtin", "in-target", "--", "chown", "-R", "ubuntu:ubuntu", "/home/ubuntu"]
+#  17_run_snap_seed: ["curtin", "in-target", "--", "python3", "/var/lib/cloud/scripts/create_snap_preseed.py"]
+  19_lxd_group: ["curtin", "in-target", "--", "usermod", "-aG", "lxd", "ubuntu"]
+  #20_lxd_mapping: ["curtin", "in-target", "--", "sh", "-c", "echo 'root:1000:1' >> /etc/subuid"]
+  
+#  20_run_lxd_init: ["curtin", "in-target", "--", "/run/lxd_init_cluster.sh", "lxd_cluster_node.yml", "br2"]
+#  18_run_snap_ack: ["curtin", "in-target", "--", "snap", "ack", "/var/lib/snapd/seed/lxd_13073.assert"]
+#  19_run_snap_lxd: ["curtin", "in-target", "--", "snap", "install", "/var/lib/snapd/seed/lxd_13073.snap"]
+  21_done: ["curtin", "in-target", "--", "echo", "'#### Done Installing additional packages ####'"]
+#
+# Load snaps. Add additional snaps to end of the following python code.
+# See: https://blackboxsw.github.io/seed-snaps-using-maas.html
+write_files:
+  setubuntupwd:
+    path: /var/lib/cloud/scripts/per-once/99_setubuntupwd.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # set ubuntu pwd
+      #
+      echo "99_setubuntupwd.sh: Setting ubuntu user's pwd"
+      echo '__UBUNTU_PASSWORD__' | chpasswd
+      echo "99_setubuntupwd.sh: Finished ubuntu user's pwd"
+  startntp:
+    path: /var/lib/cloud/scripts/per-once/99_startNTP.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # start ntp service
+      #
+      echo "Starting NTP service"
+      systemctl start ntp
+      echo "Finished starting NTP service"
+  mtu9000:
+    path: /var/lib/cloud/scripts/per-once/99_mtu9000.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # change netplan's MTU values to 9000
+      #
+      echo "99_mtu9000.sh: Not installing lxd110h00-50-cloud-init.yaml"
+      exit 0
+      
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "installing new netplan with proper MTU values"
+      fn=lxd110h00-50-cloud-init.yaml
+      wget $WEB_MAAS/config/lxd/$fn
+      mv -f $fn /etc/netplan/50-cloud-init.yaml
+      netplan apply
+  tarballs:
+    path: /var/lib/cloud/scripts/per-once/00_tarballs.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # install tarballs
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install_tarballs"
+      wget $WEB_MAAS/config/lxd/install_tarballs
+      chmod 755 install_tarballs
+      ./install_tarballs
+  dsarepos:
+    path: /var/lib/cloud/scripts/per-once/00_clone_dsa_repos.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # clone dsa repos
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "dsarepos"
+      cd /home/ubuntu && wget $WEB_MAAS/config/homedirfiles/.mrtrust && wget $WEB_MAAS/config/homedirfiles/.gitconfig && wget $WEB_MAAS/config/homedirfiles/.gitignore
+      mkdir -p /usr/local/bin && cd /usr/local/bin && wget $WEB_MAAS/config/homedirfiles/diff-highlight && chmod 755 diff-highlight
+      mkdir -p /home/ubuntu/proj
+      cd /home/ubuntu/proj && git clone https://github.com/dsa110/dsa110-shell.git
+      cd dsa110-shell
+      cp .mrconfig .mrconfig_ssh
+      # modify existing .mrconfig option
+      sed -i -e 's+git@github.com:+http\s\://github.com/+g' .mrconfig
+      /usr/bin/mr -t checkout
+      chown -R ubuntu:ubuntu /home/ubuntu
+  anaconda3:
+    path: /var/lib/cloud/scripts/per-once/00_anaconda3.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # install anaconda3
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "installing anaconda3"
+      fn=Anaconda3-2020.02-Linux-x86_64.sh
+      cd /run && wget $WEB_MAAS/scripts/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      cd /home/ubuntu && bash /run/$fn -b -p /home/ubuntu/anaconda3 && cd -
+      chown -R ubuntu:ubuntu /home/ubuntu
+  lxd_install_service:
+    path: /var/lib/cloud/scripts/per-once/00_0_lxd_install_service.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Install LXD snap
+      #
+      echo "00_0_lxd_install_service.sh: installing snap lxd"
+      snap install lxd
+      count=0
+      while($count -lt 10); do
+         if [[ -e /snap/bin/lxd ]]; then
+            echo "lxd installed"
+            count=20
+         fi
+         count=$((count+1))
+      done
+      if [[ $count == 10 ]]; then
+         echo "lxd failed to install"
+      fi
+  lxd_init_cluster:
+    path: /var/lib/cloud/scripts/per-once/00_1_lxd_init_cluster.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Modify lxd_cluster_first_node.yml file for specific hostname
+      #
+      echo "00_1_lxd_init_cluster.sh Starting..."
+
+      WEB_MAAS="http://10.42.0.3/maas"
+
+      fn=lxd_cluster_first_node.yml
+      iface=br2
+      hn=`hostname`
+      ip=`ip address show dev $iface | grep $iface | grep inet | awk '{print $2}' | awk -F '/' '{print $1}'`
+
+      if [[ "$hn" == "" ]]; then
+          echo "Could not obtain hostname. Bye"
+          exit 1
+      fi
+
+      if [[ "$ip" == "" ]]; then
+          echo "Could not obtain IP address. Bye"
+          exit 1
+      fi
+
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+
+      sed -i -e "s/THISHOST/$hn/g" /run/$fn
+      sed -i -e "s/THISIP/$ip/g" /run/$fn
+      sed -i -e "s/PASSWD/__LXD_TRUST_PASSWORD__/g" /run/$fn
+
+      # remove hostname from /etc/hosts
+      hnfq=`nslookup $hn | grep Name | awk '{print $2}'`
+      if [[ "$hnfq" == "" ]]; then
+         echo "hnfq empty. /etc/hosts unchanged"
+         cat /etc/hosts
+      else
+         sed -i -e "s/$hnfq//" /etc/hosts
+      fi
+
+      # add snapcraft.io to /etc/hosts to prevent snap from updating lxd
+      echo "127.0.0.1  api.snapcraft.io  api" >> /etc/hosts
+      
+      cat /run/$fn | /snap/bin/lxd init --preseed
+      # allow LXD to update database
+      sleep 60
+  lxd_install_cert:
+    path: /var/lib/cloud/scripts/per-once/01_lxd_install_cert.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Replace server crt for cluster.
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "installing lxd cert"
+      fncrt=server.crt
+      fnkey=server.key
+      path=/var/snap/lxd/common/lxd
+      echo "Stopping lxd to insert certs"
+      snap stop lxd
+      rm -f $path/$fncrt
+      rm -f $path/$fnkey
+      cd $path && wget $WEB_MAAS/config/lxd/$fncrt && cd -
+      cd $path && wget $WEB_MAAS/config/lxd/$fnkey && cd -      
+      if [[ ! -e $path/$fncrt ]]; then
+          echo "$path/$fncrt does not exist. trying one more time"
+          sleep 10
+          # echo "deleting extra default routes"
+          route del default gw 10.42.0.4
+          # echo "routes are: "
+          route -n
+          cd $path && wget $WEB_MAAS/config/lxd/$fncrt && cd -
+      fi
+      if [[ ! -e $path/$fnkey ]]; then
+          echo "$path/$fnkey does not exist. trying one more time"
+          sleep 10
+          cd $path && wget $WEB_MAAS/config/lxd/$fnkey && cd -      
+      fi
+      if [[ ! -e $path/$fncrt ]]; then
+          echo "$path/$fncrt does not exist. Container installs will fail"
+      fi
+      if [[ ! -e $path/$fnkey ]]; then
+          echo "$path/$fnkey does not exist. Container installs will fail"
+      fi
+      chmod 600 $path/$fnkey
+      snap start lxd
+  lxd_add_profile_corr:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_corr.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add corr profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd corr profile"
+      hn=`hostname`
+      corr_name=${hn//lxd110h/corr}
+      fn=corrprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create corr
+      lxc profile edit corr < /run/$fn
+  lxd_add_corr:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_corr.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add corr container
+      #
+      echo "Installing corrXX"
+      hn=`hostname`
+      corr_name=${hn//lxd110h/corr}
+      echo "Adding corr container: $corr_name"
+      lxc launch ubuntu:16.04 $corr_name -p corr
+      echo 'root:1000:1' >> /etc/subuid
+
+      # Now add device to corr_name
+      sleep 30
+      echo "Configuring bind mount for $corr_name"
+      lxc config set $corr_name raw.idmap 'both 1000 1000'
+      lxc exec $corr_name -- mkdir -p /home/ubuntu/data
+      lxc exec $corr_name -- chown ubuntu:ubuntu /home/ubuntu/data
+      lxc config device add $corr_name ubuntu-data disk source=/home/ubuntu/data path=/home/ubuntu/data
+      echo "Done configuring bind mount for $corr_name"
+  lxd_add_profile_logstash:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_logstash.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add logstash profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd logstash profile"
+      hn=`hostname`
+      fn=logstashprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create logstash
+      lxc profile edit logstash < /run/$fn
+  lxd_add_logstash:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_logstash.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add logstash container
+      #
+      echo "Installing logstash container"
+      lxc launch ubuntu:18.04 logstash -p logstash
+      echo 'root:1000:1' >> /etc/subuid
+
+      # Now add device to logstash
+      sleep 30
+      echo "Configuring bind mount for logstash"
+      lxc config set logstash raw.idmap 'both 1000 1000'
+      lxc exec logstash -- mkdir -p /home/ubuntu/logs
+      lxc exec logstash -- chown ubuntu:ubuntu /home/ubuntu/logs
+      lxc config device add logstash ubuntu-data disk source=/home/ubuntu/logs path=/home/ubuntu/logs
+      echo "Done configuring bind mount for logstash"
+  lxd_add_profile_etcdv3:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_etcdv3.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add etcdv3 profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd etcdv3 profile"
+      fn=etcdv3profile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create etcdv3
+      lxc profile edit etcdv3 < /run/$fn
+  lxd_add_profile_influxdb:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_influxdb.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add influxdb profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd influxdb profile"
+      fn=influxdbprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create influxdb
+      lxc profile edit influxdb < /run/$fn
+  lxd_add_profile_grafana:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_grafana.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add grafana profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd grafana profile"
+      fn=grafanaprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create grafana
+      lxc profile edit grafana < /run/$fn
+  lxd_add_profile_ant:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_ant.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add ant profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd ant profile"
+      fn=antprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create ant
+      lxc profile edit ant < /run/$fn
+  lxd_add_profile_bokeh:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_bokeh.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add bokeh profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd bokeh profile"
+      fn=bokehprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create bokeh
+      lxc profile edit bokeh < /run/$fn
+  lxd_add_profile_webserverUI:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_webserverUI.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add webserverUI profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd webserverUI profile"
+      fn=webserverUIprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create webserverUI
+      lxc profile edit webserverUI < /run/$fn
+  lxd_add_profile_etcdWx:
+    path: /var/lib/cloud/scripts/per-once/02_lxd_add_profile_etcdWx.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add Wx profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd wx profile"
+      fn=wxprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create wx
+      lxc profile edit wx < /run/$fn
+  lxd_add_etcdWxservice:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_etcdWxservice.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add etcdWxservice container
+      #
+      con_name="etcdWxservice"
+      echo "Adding etcdWxservice container: $con_name"
+      lxc launch ubuntu:18.04 $con_name -p wx
+  lxd_add_etcdv3service:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_etcdv3service.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add etcdv3service container
+      #
+      con_name="etcdv3service"
+      echo "Adding etcdv3service container: $con_name"
+      lxc launch ubuntu:18.04 $con_name -p etcdv3
+  lxd_add_influxdbservice:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_influxdbservice.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add influxdbservice container
+      #
+      con_name="influxdbservice"
+      echo "Adding influxdbservice container: $con_name"
+      lxc launch ubuntu:18.04 $con_name -p influxdb
+  lxd_add_webserverUIservice:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_webserverUIservice.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add webserverUIservice container
+      #
+      con_name="webserverUIservice"
+      echo "Adding webserverUIservice container: $con_name"
+      lxc launch ubuntu:18.04 $con_name -p webserverUI
+  lxd_add_grafanaservice:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_grafanaservice.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add grafanaservice container
+      #
+      con_name="grafanaservice"
+      echo "Adding grafanaservice container: $con_name"
+      lxc launch ubuntu:18.04 $con_name -p grafana
+  lxd_add_antservice:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_antservice.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add ant service container
+      #
+      echo "Not installing antservice."
+      #con_name="antservice"
+      #echo "Adding antenna control service container: $con_name"
+      #lxc launch ubuntu:18.04 $con_name -p ant
+  lxd_add_bokehservice:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_bokehservice.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add bokeh service container
+      #
+      con_name="bokehservice"
+      echo "Adding bokeh service container: $con_name"
+      lxc launch ubuntu:18.04 $con_name -p bokeh
+  lxd_add_profile_snapcontrol:
+    path: /var/lib/cloud/scripts/per-once/03_lxd_add_profile_snapcontrol.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add snapcontrol profile
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "install lxd snapcontrol profile"
+      hn=`hostname`
+      fn=snapprofile.yaml
+      cd /run && wget $WEB_MAAS/config/lxd/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      lxc profile create snapcontrol
+      lxc profile edit snapcontrol < /run/$fn
+  lxd_add_snapservice:
+    path: /var/lib/cloud/scripts/per-once/04_lxd_add_snapservice.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Add snapservice container
+      #
+      hn=`hostname`
+      cont_name='snapservice'
+      echo "Adding corr container: $cont_name"
+      lxc launch ubuntu:16.04 $cont_name -p snapcontrol
+  sysctl:
+    path: /var/lib/cloud/scripts/per-once/00_sysctl.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # Modify sysctl parameters
+      #
+      WEB_MAAS="http://10.42.0.3/maas"
+      echo "modify sysctl parameters"
+      fn=set_sysctl
+      cd /run && wget $WEB_MAAS/config/sysctl/$fn && cd -
+      if [[ ! -e /run/$fn ]]; then
+          echo "/run/$fn does not exist. Bye"
+      fi
+      chmod 755 /run/$fs
+      # need to source the file, not execute it.
+      source /run/$fn
+  cuda:
+    path: /var/lib/cloud/scripts/per-once/00_install-cuda-1804.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      #
+      # script to install cuda
+      #
+      echo "INSTALLING CUDA"
+      WEB_MAAS="http://10.42.0.3/maas"
+
+      echo "deleting default route to 10.41.0.4"
+      route del default gw 10.41.0.4
+      
+      wget $WEB_MAAS/config/tarballs/cuda-ubuntu1804.pin
+      mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
+      wget $WEB_MAAS/config/tarballs/cuda-repo-ubuntu1804-11-1-local_11.1.0-455.23.05-1_amd64.deb
+      dpkg -i cuda-repo-ubuntu1804-11-1-local_11.1.0-455.23.05-1_amd64.deb
+      apt-key add /var/cuda-repo-ubuntu1804-11-1-local/7fa2af80.pub
+      apt-get update
+      apt-get -y install cuda
+      nvidia-smi > /home/ubuntu/nvidia-smi.out
+      echo "Finished Installing cuda"
+
+# doen't work  
+#snap:
+#  commands:
+#    00: snap install lxd

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Create a python 3.8 anacoda environment
+# with Casa6
+
+# Path to environment file
+RU="runuser -l ubuntu -c "
+CONDA="/home/ubuntu/anaconda3/bin/conda"
+
+chown -R ubuntu:ubuntu /home/ubuntu/anaconda3
+cd /home/ubuntu
+
+# remove casa38 env
+$CONDA remove -n casa38 --all -y
+
+# update anaconda
+# $RU "$CONDA update conda -y"
+$CONDA update conda -y
+
+# create virtual env
+#$RU "$CONDA env create -f /home/ubuntu/dsaenv02.yaml"
+$CONDA env create -f /home/ubuntu/dsaenv02.yaml
+
+# Init shell
+# $RU "$CONDA init bash"
+$CONDA init bash
+
+# Change default environment
+# $RU "sed -i 's/conda activate casa/conda activate casa38/g' /home/ubuntu/.bashrc"
+#sed -i 's/conda activate casa/conda activate casa38/g' /home/ubuntu/.bashrc
+echo "conda activate casa38" >> /home/ubuntu/.bashrc

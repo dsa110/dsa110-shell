@@ -1,0 +1,103 @@
+config:
+  boot.autostart: true
+  limits.kernel.memlock: "10000000000"
+  user.user-data: |
+    #cloud-config
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIc+gVOM+7AOx2IbVovUIlaHfGkZlLCu+ynxXm9j/Q5/ rh@birch
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMyNlZ29EChndiAdFXo/CPMoGBreWYykEUYfem0wZOPq+dPFOxPR4uC0KV9gpR2TutdszYMwZ/zb261rTBbp9GP9KiS2qGVGSa8DhLS3qqtguwqWhSjV7NPd0AuvWCy5c1965ah/m937N2K23yQ9UD9ZnV1tKMQsu4/wvJXZCHR4d4/rOdBF7+0twviIMBCp3AbQdXVyYyzbpnYAVxzQBRH/U+gMORS5DJicRYONdoH5kDrcpR3tXZ6Xf40T4V4YR/7Ng0nghVvqcA0DAGZq6hSfinzp3fMzlo0PUHM7TRNX+rwQ/dVNfFYf33kSnhOH5TMUgUZvCLfu926kUVrb9J vikram@ironbark.caltech.edu
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTkvhtnzl9ZxXHrbPtRS2o36VOQek8/pOLDABBSmgDjhw/K+HqIUIzRgMoRZklTc8v83KNq9fy/Y99cZqE4B4yhRXxFiA1YS5WarlEZbodblzs2ILsLdDMY/86TW6SfoOAgOyEYbrOA+gAA8RMSV4y/a4bOrbl0IKLwl2MsfhcN7brF7b5AkWpq1voTLtJT9LjvNTaDUjrjK6Oh25Kq+7QsxrCmDhxnCbUZd08dljBqnbMURTX6aHYBf40xqYq1Gg0kOVvP2VDKHwZ4f0tMId6Cdv6xp51z9l1w9VjX2Q0OUknEswRlOHjJ/thPg9CPhrP/EInBYdvIWHDiwlgbELx dana@rhaenys.local
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF3aBhodW33N8ATmb3h4c13rFf5s8cwiP8ljSovtvhkP nitika@penelope
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEA7jRsnYrsyzeI5AuWclSc/VdXtSAdiwoKGFzkn2F5sY/u4AEgTm+7Eb00BH0eqfQHYCQs7CVIm9Tm2SSePPWa0qCAxOnGMhibRSQhm0NTz3j+kKr/ovIzDPoVfY1h78G4Iduchl15f0xxYAQVqnsc45eZW1otmBXVeH1T2cBjZr9q8uXTWFec6en6/jk36o8lb7elLRY161yJKjkFtx0sYyBqH/jQfVtHAZawSfyRo6CtHbkKbm6UyBvMpK5gCTtPMSRaiVgL2qS/CZyY2f7n8LKZcu5UiLyIxsH9sz+nF1RGtqdVVkvEOJnzJJY7EvZGEwNdAO9ZWSOYVy2uq4gcdw== rsa-key-20190102
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCo0JXM7hT5Pes4KxXukblNFshh2AC390vxJH5YEa5c0m3edp2v7X1lIFB/bKz3i1zR4s9jZDBsYeruUnX5zfqPcEiBwGCgbcc6PsfDHfDZgEjk/ecX6JC0PlpZPPY/SUvmL56Kcn0nrHqWDPTqQqLbP3LG5JY7aysU4EhH25sG29I35qjclviSWHGJFVPf295so4Zeua/HQt1xdY4hIZTJMYyvzj9yNGgzT0Hh0VZQcyp8qs+lS4eolcwbxjtHbRJ9E+LOSn6fhPj7yMaIO+IkXL+fqYrG5KlY2uqV9HSaYM+jWXWw9u7rSrcDe7/aPXb3lklGCeC+a6CdR9SjTZ1L kp@castor
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDns2kcUXyN2XyzDRN9Zgwa1ks4kMKm/SJYrI5qrEs4t0zBynUfuaL5fOeHogU7m7J0J9nC9TCtyGkdnCDmBc3ZMPfbkRHQ3CjiNI4iH/gy8oq3S6yhPiaGI+MNBE13NoBNP5PSJ/uXNhEXhX8AacMWu1RLYmoTmkKZUpV0pXrjpcmqTQzJFf/EsMyeFEHoZ8j6yLpsEjHg/DyIzWiUJdlKUDgciTgvmucPEsBRgybN5KHS0o3r0wzAmfGeLEV69QPHcjojDq2CjlkYRLeCnCeIB9ScB6p9Zk3MkH5/xayzXQFrPxOQH4MXloEtJxiVLkL4Btx/rHC7vQHR+QmjTyXl greg@greg-PC
+      - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAsNHIUVeIMPWBDzefyirlaigunAdDSK8983IZGUmJOiUstZtnteCVVz8maHmJdfoBbfQ4dTWzMZ0C6VrTq4xZz4YoTidP1/ur7eWt+zTwjZX+yBH5xtKblW9aPbokG2mMqwWbsA2IdaQRlwwbRP+LLhwSxYpWyZs5LcKPyr3Irk+uQX2itSWPDClGZDX/MAAFqBuuZIteI4LPEG3frtcg1m6FqVgkfK9sZOvpS3poXM9dOFLs18FbAyq5tdATlOr/a6VK5OMht3VS8Hi+unnu8/OXTTKK3xAV5mbhFnhNwBKEcEHRV3O+A605CCtxJM0brnIKIHwwdtDx1ehNxobH1Q== claw@gygax
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM4emdQ1j8ULrAj5QLEs90Kqx46aNbltefV1Pql9C1XP gechen@dhcp-193-198.caltech.edu
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFhkcTCeCXsEdJ9xTID45u9N/VDT8vT40oLOJphA3vSb user@dsa-storage
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILwHCkFBFn7hzpJ/FttPBzwpsQK4ibNNkqMkheM4Z9md its\lamb@Avon
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN6RGTPgRM8YAiQ6iL7s+XsgI8ACnN/5MsMC9pJfjzdv msmoot
+    package_upgrade: true
+    packages:
+      - emacs24-nox
+      - gnupg-curl
+      - ssh
+      - myrepos
+      - make
+      - autoconf
+      - autotools-dev
+      - libtool
+      - pkg-config
+      - csh
+      - gcc
+      - g++
+      - gfortran
+      - libnuma-dev
+      - syslog-ng
+      - libtool-bin
+      - libboost-all-dev
+      - xorg
+    timezone: UTC
+    runcmd:
+      - [wget, "http://10.42.0.3/maas/config/tarballs/cuda-ubuntu1604.pin"]
+      - [mv, cuda-ubuntu1604.pin, /etc/apt/preferences.d/cuda-repository-pin-600]
+      - [wget, "http://10.42.0.3/maas/config/tarballs/cuda-repo-ubuntu1604-11-1-local_11.1.0-455.23.05-1_amd64.deb"]
+      - [dpkg, "-i", "cuda-repo-ubuntu1604-11-1-local_11.1.0-455.23.05-1_amd64.deb"]
+      - [apt-key, add, "/var/cuda-repo-ubuntu1604-11-1-local/7fa2af80.pub"]
+      - [apt-get, update]
+      - [apt-get, -y, install, cuda]
+      - [wget, "--no-check-certificate", "http://10.42.0.3/maas/config/sysctl/set_sysctl"]
+      - [chmod, 755, set_sysctl]
+      - [/bin/bash, /set_sysctl]
+      - [mkdir, "-p", /home/ubuntu/proj]
+      - [wget, "--no-check-certificate", "http://10.42.0.3/maas/config/lxd/install_tarballs"]
+      - [chmod, 755, /install_tarballs]
+      - [/install_tarballs]
+      - [wget, "--no-check-certificate", "http://10.42.0.3/maas/config/lxd/install_anaconda3"]
+      - [chmod, 755, /install_anaconda3]
+      - [/install_anaconda3]
+      - [wget, "--no-check-certificate", "http://10.42.0.3/maas/config/lxd/create_conda_py36"]
+      - [wget, "--no-check-certificate", "http://10.42.0.3/maas/config/lxd/dsaenv01.yaml"] 
+      - [chmod, 755, /create_conda_py36]
+      - [/create_conda_py36]
+      - [wget, "--no-check-certificate", "http://10.42.0.3/maas/config/homedirfiles/.bashrc_corr"]
+      - [mv, ".bashrc_corr", "/home/ubuntu/.bashrc"]
+      - [chown, "-R", "ubuntu:ubuntu", "/home/ubuntu"]
+      - [wget, "--no-check-certificate", "http://10.42.0.3/maas/config/lxd/install_repos_c"]
+      - [chmod, 755, /install_repos_c]
+      - [/install_repos_c]
+      - [wget, "--no-check-certificate", "http://10.42.0.3/maas/config/lxd/install_repos_py36"]
+      - [chmod, 755, /install_repos_py36]
+      - [su, "-", "ubuntu", "-c", "/install_repos_py36"]
+      - [mkdir, "-p", "/home/ubuntu/tmp"]
+      - [mkdir, "-p", "/home/ubuntu/data"]
+      - [chown, "-R", "ubuntu:ubuntu", "/home/ubuntu"]
+
+description: Put container on sas.pvt(10.41.0.0/24) network
+devices:
+  X0:
+    bind: container
+    connect: unix:@/tmp/.X11-unix/X1
+    listen: unix:@/tmp/.X11-unix/X0
+    security.gid: "1000"
+    security.uid: "1000"
+    type: proxy
+  eth0:
+    maas.subnet.ipv4: sas.pvt
+    name: eth0
+    nictype: bridged
+    parent: br2
+    type: nic
+#  eth1:
+#    maas.subnet.ipv4: pro.pvt
+#    name: eth1
+#    nictype: bridged
+#    parent: br1
+#    type: nic
+  gpu:
+    type: gpu
+  root:
+    path: /
+    pool: local
+    type: disk
+name: corr
+used_by:

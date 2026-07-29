@@ -1,0 +1,42 @@
+[user]
+    email = ubuntu@pm.me
+    name = ubuntu
+[alias]
+    ba = branch --all
+    co = checkout
+    com = commit -s
+    dangle = fsck --no-reflogs
+    log = log -p --color
+    glog = log --graph --decorate --color
+#    hash = rev-parse HEAD | GREP_COLORS='ms=34\;1' grep $(git rev-parse --short=0 HEAD)
+    lg = log --color --graph --pretty=format:'%C(bold magenta)%h%Creset %C(bold green)[%G?]%Creset-%C(bold yellow)%d%Creset %s %Cgreen(%cI) %C(bold blue)<%an>%Creset'
+    lgr = log --color --graph --pretty=format:'%C(bold magenta)%h%Creset %C(bold green)[%G?]%Creset-%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+    lga = log --color --graph --pretty=format:'%C(bold magenta)%h%Creset %C(bold green)[%G?]%Creset-%C(bold yellow)%d%Creset %s %Cgreen(%cI) %C(bold blue)<%an>%Creset' --all
+    lgar = log --color --graph --pretty=format:'%C(bold magenta)%h%Creset %C(bold green)[%G?]%Creset-%C(bold yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --all
+    rem = remote --verbose
+    showtags = log --oneline --decorate --tags --no-walk
+    showbr = log --oneline --decorate --branches --no-walk
+    showit = log --oneline --decorate -q --no-walk
+#    gitTags = 
+[core]
+    # must use absolute file path and not ~/.gitignore
+    excludesfile = /home/ubuntu/.gitignore
+[push]
+    default = simple
+[diff]
+    color = true
+[pager]
+	log = diff-highlight --color-words | less
+	show = diff-highlight --color-words | less
+	diff = diff-highlight --color-words | less    
+[receive]
+    certNonceSeed = aveioefvesek
+
+[url "ssh://git.ovro.caltech.edu:"]
+    insteadOf = http://git.ovro.caltech.edu
+[url "ssh://git.ovro.caltech.edu:"]
+	insteadOf = https://git.ovro.caltech.edu
+[url "ssh://git.ovro.caltech.edu:"]
+	insteadOf = https://www.ovro.caltech.edu
+[fetch]
+	prune = true

@@ -1,0 +1,126 @@
+# global git ignore file for all repositories. Other patterns specific
+# to repositories can be placed in the repository directory in .gitignore.
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+#*.mod*
+*.cmd
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+
+# automake generated files
+aclocal.m4
+autom4te.cache
+config.h.in
+configure
+depcomp
+install-sh
+Makefile.in
+missing
+
+# latexmk generated files
+*.pdf
+*.out
+*.bbl
+*.fdb_latexmk
+*.blg
+*.fls
+
+# Graph types
+*.png
+
+# emacs editor save files
+*~
+.*~
+\#*
+.\#*
+
+# java related
+*.jar
+*.class
+
+# latex generated files
+*.aux
+*.log
+*.dvi
+
+# atmel compiled files
+*.eep
+*.elf
+*.hex
+*.lss
+*.map
+*.sym
+*.lst
+
+# Windoze crap
+*.doc
+*.xls
+*.exe
+*.ini
+*.wri
+
+# CVS
+CVS
+.cvsignore
+
+# Make depedency dir
+.dep
+
+# misc
+*.tobedeleted
+*.java.test
+
+# python
+*.pyc
+
+# data
+*.h5
+
+
