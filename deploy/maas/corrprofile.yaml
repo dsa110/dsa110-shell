@@ -7,18 +7,18 @@ config:
   user.user-data: |
     #cloud-config
     ssh_authorized_keys:
-      - ssh-ed25519 __REDACTED_PUBKEY__ rh@birch
-      - ssh-rsa __REDACTED_PUBKEY__ vikram@ironbark.caltech.edu
-      - ssh-rsa __REDACTED_PUBKEY__ dana@rhaenys.local
-      - ssh-ed25519 __REDACTED_PUBKEY__ nitika@penelope
-      - ssh-rsa __REDACTED_PUBKEY__ rsa-key-20190102
-      - ssh-rsa __REDACTED_PUBKEY__ kp@castor
-      - ssh-rsa __REDACTED_PUBKEY__ greg@greg-PC
-      - ssh-rsa __REDACTED_PUBKEY__ claw@gygax
-      - ssh-ed25519 __REDACTED_PUBKEY__ gechen@dhcp-193-198.caltech.edu
-      - ssh-ed25519 __REDACTED_PUBKEY__ user@dsa-storage
-      - ssh-ed25519 __REDACTED_PUBKEY__ its\lamb@Avon
-      - ssh-ed25519 __REDACTED_PUBKEY__ msmoot
+      - ssh-ed25519 __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-rsa __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-rsa __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-ed25519 __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-rsa __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-rsa __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-rsa __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-rsa __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-ed25519 __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-ed25519 __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-ed25519 __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
+      - ssh-ed25519 __REDACTED_PUBKEY__ __REDACTED_IDENTITY__
     package_upgrade: true
     packages:
       - emacs24-nox
