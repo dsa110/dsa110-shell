@@ -1,0 +1,32 @@
+# DSA-110 web UI (websrv) -- serves :9090 per websrvConfig.yml.
+# Reached as webserverUIservice.pro.pvt:9090.
+#
+# Reads etcd for its monitor tables, so it is ordered after etcdv3.
+#
+# Adapted 2026-07-30: added the etcdv3 ordering, added
+# Wants=network-online.target, and dropped the ineffective pkill-based
+# ExecStop/ExecReload (see etcdv3.service).
+#
+# KNOWN ISSUE (2026-07-30): websrvConfig.yml sets
+# allow-ip: "lxd110maas.ovro.pvt", a name that does not resolve anywhere in
+# this installation -- lxd110maas is absent from both MaaS and DNS and is only
+# ever reached by its literal IP 10.42.0.3.  Expect access-control trouble
+# until that is corrected.
+
+[Unit]
+Description=DSA110 Web UI Service
+Documentation=man:websrv
+After=network-online.target etcdv3.service
+Wants=network-online.target etcdv3.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu
+ExecStart=/home/ubuntu/bin/startWebserverUI
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

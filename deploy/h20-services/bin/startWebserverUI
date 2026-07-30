@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# DSA-110 web UI (websrv) -- bare metal on lxd110h20.  Serves :9090
+# per websrvConfig.yml.
+#
+# Rewritten 2026-07-30: dropped the unused broken-$IP line and the
+# sleep-forever block.  websrv reads websrvConfig.yml and etcdConfig.yml
+# relative to its working directory, so the cd matters.
+#
+set -eo pipefail
+
+cd /home/ubuntu/proj/websrv
+exec ./websrv

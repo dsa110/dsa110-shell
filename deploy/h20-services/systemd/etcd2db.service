@@ -1,0 +1,33 @@
+# etcd2db -- bridges etcd /mon/{ant,cal,wx} into InfluxDB {antmon,calmon,wxmon}.
+#
+# This is the unit whose ordering the container-era set got wrong: it declared
+# only After=network-online.target, so on a cold boot it could start before
+# either etcd or influxd was listening.  It would then fail its first
+# connection and sit out the 30 s RestartSec repeatedly.  Both dependencies are
+# now declared.
+#
+# Wants= rather than Requires= deliberately: with Requires=, stopping influxdb
+# for maintenance would forcibly stop etcd2db too, and a transient influx
+# failure would take this down permanently rather than letting
+# Restart=on-failure retry.
+#
+# Adapted 2026-07-30.  Also dropped the ineffective pkill-based ExecStop
+# (see etcdv3.service).
+
+[Unit]
+Description=etcd2db Service
+Documentation=man:etcd2db
+After=network-online.target etcdv3.service influxdb.service
+Wants=network-online.target etcdv3.service influxdb.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu
+ExecStart=/home/ubuntu/bin/startEtcd2db
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

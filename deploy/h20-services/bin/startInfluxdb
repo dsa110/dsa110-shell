@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# InfluxDB 1.7.7 for DSA-110, bare metal on lxd110h20.
+#
+# Rewritten 2026-07-30.  Two fixes over the container-era original:
+#
+#  1. It ran `influxd` with NO -config flag, so the influxdb.conf shipped
+#     inside the tarball was ignored entirely and influxd fell back to its
+#     built-in defaults.  We now pass the config explicitly, so edits to
+#     that file actually take effect.
+#  2. Dropped the trailing `while true; do sleep 60; done` block (see
+#     startEtcdServer for why that was actively harmful) and exec instead.
+#
+# Data lives under /var/lib/influxdb/{meta,data,wal}, which must be owned by
+# ubuntu because this runs as User=ubuntu.
+#
+set -eo pipefail
+
+INFLUXD=/home/ubuntu/proj/influxdb-1.7.7-1/influxd
+CONF=/home/ubuntu/proj/influxdb-1.7.7-1/influxdb.conf
+
+exec "$INFLUXD" -config "$CONF"

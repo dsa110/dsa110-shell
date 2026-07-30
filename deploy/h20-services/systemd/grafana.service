@@ -1,0 +1,25 @@
+# Grafana 6.2.5 -- dashboards on :3000, reached as grafanaservice.pro.pvt:3000
+# or lxd110h20.pro.pvt:3000.  Its InfluxDB datasource is local.
+#
+# Adapted 2026-07-30: added the influxdb ordering (its only datasource lives
+# there, so starting first just means every panel errors until influx comes
+# up), added Wants=network-online.target, and dropped the ineffective
+# pkill-based ExecStop/ExecReload (see etcdv3.service).
+
+[Unit]
+Description=Grafana Service
+Documentation=man:grafana
+After=network-online.target influxdb.service
+Wants=network-online.target influxdb.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu
+ExecStart=/home/ubuntu/bin/startGrafana
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

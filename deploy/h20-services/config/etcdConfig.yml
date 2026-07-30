@@ -1,0 +1,23 @@
+# ETCD client config -- for etcd2db, running on the same host as etcd itself.
+#
+# Corrected 2026-07-30.  The container-era original read
+#
+#     endpoints: ["etcdv3service:2379"]
+#
+# a BARE hostname that relied on the resolver's search list.  On this
+# installation /etc/resolv.conf has `search sas.pvt`, so that expanded to
+# etcdv3service.sas.pvt -- a name which has never existed, and which cannot be
+# created, because MaaS's sas.pvt domain is authoritative=False and BIND does
+# not serve the zone at all.  The bare name therefore resolved to nothing and
+# etcd2db could never connect.
+#
+# etcd2db runs on the same box as etcd, so loopback is the right answer: no DNS
+# dependency, no network hop, and it keeps working even if the pro interface is
+# down.  startEtcdServer listens on both 127.0.0.1:2379 and the br1 address.
+#
+# (Remote clients use the CNAME etcdv3service.pro.pvt:2379 instead.)
+
+endpoints: ["127.0.0.1:2379"]
+
+# Number of seconds for timeout
+timeout: "1s"

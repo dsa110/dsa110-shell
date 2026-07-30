@@ -1,0 +1,32 @@
+# etcd v3 -- the DSA-110 control plane.
+#
+# Reached fleet-wide as etcdv3service.pro.pvt:2379 (a CNAME to
+# lxd110h20.pro.pvt).  Hardcoded in dsa110-pyutils dsautils/conf/etcdConfig.yml
+# on every corr node, in dsart configs/etcd_endpoints.yaml, and in
+# dsa110-operator -- including an authorized_keys permitopen= restriction.
+# Nothing else on this host may take port 2379.
+#
+# Adapted 2026-07-30 from RH's container-era unit.  Changes: added
+# Wants=network-online.target (After= alone does not pull the target in), and
+# removed ExecStop/ExecReload, which ran `pkill -9 -f startEtcdServer`.  That
+# matched the wrapper script by name, but the wrapper now exec's etcd, so the
+# name is gone from the process table and the pkill silently did nothing.
+# systemd's default control-group kill handles stop and restart correctly.
+
+[Unit]
+Description=Etcd V3 Service
+Documentation=man:etcd
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu
+ExecStart=/home/ubuntu/bin/startEtcdServer
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

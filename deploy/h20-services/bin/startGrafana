@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Grafana 6.2.5 for DSA-110, bare metal on lxd110h20.  Serves :3000.
+#
+# Rewritten 2026-07-30: dropped the unused broken-$IP line and the
+# sleep-forever block, and passed -homepath explicitly so the server does not
+# depend on inheriting the right working directory.
+#
+set -eo pipefail
+
+HOME_PATH=/home/ubuntu/proj/grafana-6.2.5
+
+cd "$HOME_PATH"
+exec ./bin/grafana-server -homepath "$HOME_PATH"

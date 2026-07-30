@@ -1,0 +1,29 @@
+# InfluxDB 1.7.7 -- monitoring timeseries store, database "dsa110".
+#
+# Queried as influxdbservice.pro.pvt:8086 / lxd110h20.pro.pvt:8086.
+# Written to by etcd2db (this host) and read by Grafana (this host).
+#
+# Adapted 2026-07-30 from RH's container-era unit: added
+# Wants=network-online.target and dropped the ineffective pkill-based
+# ExecStop/ExecReload (see etcdv3.service for the reasoning).
+#
+# Data dirs are /var/lib/influxdb/{meta,data,wal} per influxdb.conf and must
+# be owned by ubuntu, since this runs as User=ubuntu.
+
+[Unit]
+Description=Influx 1.7 Service
+Documentation=man:influxdb
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu
+ExecStart=/home/ubuntu/bin/startInfluxdb
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

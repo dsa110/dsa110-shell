@@ -1,0 +1,49 @@
+#!/bin/bash
+#
+# Single-node etcd v3 server for DSA-110, bare metal on lxd110h20.
+#
+# Rewritten 2026-07-30 during the h24 -> lxd110h20 promotion.  The original
+# (container-era) version derived the listen address with
+#
+#     IP=`ifconfig | grep inet | grep broadcast | awk '{print $2}'`
+#
+# which returns exactly one address inside a single-NIC LXD container but
+# THREE on this bare-metal host (br1 = pro/10.42, br2 = sas/10.41,
+# docker0 = 172.17), producing an unusable --listen-client-urls and a
+# daemon that refuses to start.  We now pin the management interface.
+#
+# Clients reach this via the DNS alias etcdv3service.pro.pvt (a CNAME to
+# lxd110h20.pro.pvt), so we must listen on the pro/management address.
+# We also listen on loopback so local tools (etcdctl, etcd2db, websrv)
+# need no DNS and take no network hop.
+#
+set -eo pipefail
+
+IFACE=br1                       # pro / management network (10.42.0.0/24)
+ETCD=/home/ubuntu/proj/godev/src/github.com/etcd-io/etcd/bin/etcd
+DATA=/home/ubuntu/etcd-data
+NAME=dsa110-h20
+
+IP=$(ip -4 -o addr show dev "$IFACE" 2>/dev/null | awk '{print $4}' | cut -d/ -f1 | head -1)
+if [ -z "$IP" ]; then
+    echo "startEtcdServer: no IPv4 address on $IFACE; refusing to start" >&2
+    exit 1
+fi
+
+mkdir -p "$DATA"
+export ETCDCTL_API=3
+
+# exec: replace the shell so systemd supervises etcd directly.  The original
+# script trailed an `if [[ "$?" == 0 ]]; then while true; do sleep 60; done; fi`
+# block, which meant a clean daemon exit left the wrapper sleeping forever --
+# systemd reported the unit "active" while etcd was dead, and
+# Restart=on-failure could never fire.
+exec "$ETCD" \
+    --name "$NAME" \
+    --data-dir "$DATA" \
+    --listen-client-urls "http://${IP}:2379,http://127.0.0.1:2379" \
+    --advertise-client-urls "http://${IP}:2379" \
+    --listen-peer-urls "http://${IP}:2380" \
+    --initial-advertise-peer-urls "http://${IP}:2380" \
+    --initial-cluster "${NAME}=http://${IP}:2380" \
+    --initial-cluster-state new

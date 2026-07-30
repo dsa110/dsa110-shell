@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# etcd2db: mirrors etcd /mon/{ant,cal,wx} into InfluxDB tables
+# {antmon,calmon,wxmon}.  Bare metal on lxd110h20.
+#
+# Rewritten 2026-07-30.  The original computed an unused $IP via the broken
+# multi-NIC ifconfig pipeline and trailed the sleep-forever block; both are
+# gone.  etcd2db reads ./etcdConfig.yml and ./etcd2dbConf.yml relative to its
+# working directory, so the cd matters.
+#
+# Note: this does NOT carry the dsart real-time mon points -- those are the
+# job of dsart_rt_to_influx.service, which is deliberately not deployed here.
+#
+set -eo pipefail
+
+cd /home/ubuntu/proj/etcd2db
+export ETCDCTL_API=3
+exec ./etcd2db

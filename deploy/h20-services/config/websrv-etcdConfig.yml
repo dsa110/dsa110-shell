@@ -1,0 +1,14 @@
+# ETCD client config for websrv (the web UI).
+# Installs to /home/ubuntu/proj/websrv/etcdConfig.yml -- websrv reads it
+# relative to its working directory, per websrvConfig.yml's
+# `etcdconfig: "etcdConfig.yml"`.
+#
+# Corrected 2026-07-30 for the same reason as etcd2db's copy: the shipped
+# value was the bare "etcdv3service:2379", which expanded to
+# etcdv3service.sas.pvt and resolved to nothing.  websrv shares this host with
+# etcd, so loopback is correct.
+
+endpoints: ["127.0.0.1:2379"]
+
+# Number of seconds for timeout
+timeout: "1s"

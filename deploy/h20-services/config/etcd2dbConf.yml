@@ -1,0 +1,23 @@
+# config file for etcd2db
+#
+# Corrected 2026-07-30: influxurl was "http://influxdbservice:8086", a bare
+# hostname that expanded via `search sas.pvt` to influxdbservice.sas.pvt and
+# resolved to nothing (see etcdConfig.yml for the full explanation).  etcd2db
+# and influxd share this host, so loopback is correct.
+
+influxurl: "http://127.0.0.1:8086"
+influxdbname: "dsa110"
+monmap:
+  /mon/ant:
+    tablename: "antmon"
+    tagnames:
+      - "ant_num"
+  /mon/cal:
+    tablename: "calmon"
+    tagnames:
+      - "ant_num"
+      - "pol"
+      - "calsource"
+  /mon/wx:
+    tablename: "wxmon"
+    tagnames:
