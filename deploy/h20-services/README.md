@@ -45,6 +45,34 @@ dashboards (`DSA110-WX`, `Antenna Monitor`, `DSA119`, `Etcd`, `calibration`, …
 and three datasources. Two consequences: the legacy dashboards survive a total
 host loss, and a fresh install does **not** start at `admin/admin`.
 
+## 1a. InfluxDB data lives on the ZFS pool
+
+h20 has its own **6-disk raidz1 pool named `dataz`** (~59 T, distinct from h23's
+same-named pool — different GUID, different disks; verify with
+`zpool get guid dataz` before ever assuming otherwise). InfluxDB's data was moved
+onto it 2026-07-30:
+
+```bash
+zfs create -o compression=lz4 -o atime=off dataz/influxdb   # -> /dataz/influxdb
+# influxdb.conf: [meta] dir, [data] dir and [data] wal-dir all point at
+#                /dataz/influxdb/{meta,data,wal}
+chown -R ubuntu:ubuntu /dataz/influxdb
+```
+
+`compression=lz4` is measurably worthwhile here — 3.3× on the initial data.
+`atime=off` avoids pointless metadata writes.
+
+⚠ **`influxdb.service` carries `RequiresMountsFor=/dataz/influxdb`, and that line
+is load-bearing.** If the pool ever fails to import, `/dataz` is just an empty
+directory on the root disk — influxd would cheerfully create fresh
+`meta/data/wal` there and come up with an **empty database**, silently losing
+every dashboard's history until someone noticed. Verified by unmounting the
+dataset and starting the unit: systemd holds it in `activating` and **no stray
+database is created**. Do not remove that line.
+
+The pool auto-imports at boot via `zfs-import-cache.service` (enabled) using
+`/etc/zfs/zpool.cache`; `zfs-mount.service` is also enabled.
+
 ## 2. Install order
 
 ```bash

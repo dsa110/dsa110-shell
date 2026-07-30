@@ -7,14 +7,22 @@
 # Wants=network-online.target and dropped the ineffective pkill-based
 # ExecStop/ExecReload (see etcdv3.service for the reasoning).
 #
-# Data dirs are /var/lib/influxdb/{meta,data,wal} per influxdb.conf and must
-# be owned by ubuntu, since this runs as User=ubuntu.
+# Data lives on the ZFS pool: /dataz/influxdb/{meta,data,wal} (dataset
+# dataz/influxdb, compression=lz4, atime=off) per influxdb.conf, owned by
+# ubuntu since this runs as User=ubuntu.
+#
+# RequiresMountsFor is load-bearing, not decoration. If the dataz pool failed to
+# import, /dataz would be an empty directory on the root disk -- influxd would
+# happily create fresh meta/data/wal there and come up with an EMPTY database,
+# silently losing every dashboard's history until someone noticed. This makes
+# systemd refuse to start the unit unless the mount is actually present.
 
 [Unit]
 Description=Influx 1.7 Service
 Documentation=man:influxdb
-After=network-online.target
+After=network-online.target zfs-mount.service
 Wants=network-online.target
+RequiresMountsFor=/dataz/influxdb
 
 [Service]
 Type=simple
