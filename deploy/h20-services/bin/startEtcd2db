@@ -13,6 +13,34 @@
 #
 set -eo pipefail
 
+# Wait for etcd AND influxd to actually accept connections before starting.
+#
+# systemd's After=/Wants= is not sufficient here: both units are Type=simple, so
+# systemd marks them "active" the moment the process forks -- etcd needs ~1 s and
+# influxd ~10 s more before they are listening.  etcd2db does not tolerate that
+# race: if it cannot get a client at startup it logs
+#   etcdaccess init(): Failed to get clientv3
+# and then SIGSEGVs on a nil pointer inside etcdaccess Watch()
+# (etcdaccess.go:126, reached from etcd2db.go:482).  Observed on the
+# 2026-07-30 reboot: the unit panicked and only recovered via
+# Restart=on-failure 30 s later, losing that window of monitoring data.
+wait_for_port() {
+    local host=$1 port=$2 name=$3 tries=${4:-60}
+    for _ in $(seq 1 "$tries"); do
+        if (exec 3<>"/dev/tcp/${host}/${port}") 2>/dev/null; then
+            exec 3<&- 2>/dev/null || true
+            echo "startEtcd2db: ${name} is up at ${host}:${port}"
+            return 0
+        fi
+        sleep 1
+    done
+    echo "startEtcd2db: ${name} not listening at ${host}:${port} after ${tries}s" >&2
+    return 1
+}
+
+wait_for_port 127.0.0.1 2379 etcd
+wait_for_port 127.0.0.1 8086 influxd
+
 cd /home/ubuntu/proj/etcd2db
 export ETCDCTL_API=3
 exec ./etcd2db

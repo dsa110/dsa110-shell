@@ -135,6 +135,17 @@ address with a **DHCP snippet** if you need it fixed.
   resolves nowhere in this installation (`lxd110maas` is absent from both MaaS
   and DNS; it is only ever reached as the literal `10.42.0.3`). websrv starts
   and serves anyway, but treat its access control as unverified.
+- **`etcd2db` SIGSEGVs if etcd is not yet listening when it starts.** It logs
+  `etcdaccess init(): Failed to get clientv3`, keeps going, and then panics on a
+  nil pointer inside `etcdaccess.Watch()` (`etcdaccess.go:126`, from
+  `etcd2db.go:482`). Declaring `After=etcdv3.service` is **not** enough: both
+  units are `Type=simple`, so systemd marks etcd active the instant it forks,
+  ~1 s before it listens (influxd needs ~10 s more). Observed on the 2026-07-30
+  reboot — the unit panicked and only recovered via `Restart=on-failure` 30 s
+  later. `startEtcd2db` therefore waits for 127.0.0.1:2379 **and** :8086 to
+  accept a connection before exec'ing. Confirmed `NRestarts=0` afterwards.
+  (Note the same `etcdaccess` nil-panic signature was what crash-looped
+  `etcdWx`.)
 - **`etcd2db` mishandles key deletion** — deleting a watched `/mon/*` key makes
   it log `unexpected end of JSON input`, because it tries to parse the empty
   value of the delete event. Harmless but noisy.
@@ -153,3 +164,36 @@ address with a **DHCP snippet** if you need it fixed.
   staged artifacts or on the upstream server. Without it, `wxmon` stays empty.
 - These are 2019-era builds (etcd 3.3, InfluxDB 1.7.7, Grafana 6.2.5) with known
   CVEs. Keep them off any routable network.
+
+### The host does not reliably boot unattended (2026-07-30)
+
+This machine is **legacy BIOS, not UEFI** (`/sys/firmware/efi` absent, so
+`efibootmgr` cannot help). Root is `/dev/nvme0n1p2`, and the NVMe has a proper
+1 MB `BIOS boot` partition with GRUB installed to it — GRUB is correct.
+
+The problem is the other six disks. They are GPT ZFS members, so each carries a
+**protective MBR**: a valid `0x55AA` signature at offset 510 but **zero
+bootloader code** (`first4=00000000`). A legacy BIOS that picks one of them
+loads its MBR, finds nothing to execute, and **hangs** rather than falling
+through to the next device. That is why the host needed a manual **F11** disk
+selection to come up, and it is why it will *not* return unattended after a
+power event.
+
+Mitigation applied, via the Supermicro BMC:
+
+```bash
+ipmitool chassis bootdev disk options=persistent
+# -> Boot Flag Valid / Options apply to all future boots
+#    Boot Device Selector : Force Boot from default Hard-Drive
+```
+
+⚠ That forces "default Hard-Drive", which resolves through the BIOS's *own*
+internal HDD priority list — so it is only a real fix if that list already puts
+the NVMe first. **The durable fix is to set the NVMe first in the BIOS hard-disk
+boot order** (BIOS setup, or the BMC web UI's boot-order page), then prove it
+with one unattended reboot. Do not zero the spinners' `0x55AA` bytes to make
+them "unbootable": that signature is part of GPT's protective MBR and they hold
+a live ZFS pool.
+
+Also note MaaS drives this machine's power over IPMI and sets the boot device
+itself when commissioning/deploying, so it can overwrite the override above.
