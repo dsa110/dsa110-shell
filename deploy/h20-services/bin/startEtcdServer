@@ -33,6 +33,33 @@ fi
 mkdir -p "$DATA"
 export ETCDCTL_API=3
 
+# --auto-compaction-* is NOT optional here.  etcd defaults to NO auto
+# compaction, so every update to a /mon key keeps its old revision forever.
+# hwmc rewrites ~217 /mon/{ant,beb} points continuously (~35 revisions/s), so
+# on 2026-07-31 the backend hit the 2 GiB default quota after roughly 18 hours,
+# etcd raised a NOSPACE alarm and went READ-ONLY, and every writer in the
+# observatory started failing with
+#   grpc StatusCode.RESOURCE_EXHAUSTED "etcdserver: mvcc: database space exceeded"
+# (antmc.service on antservice.ant.pvt was the first casualty).  Live data at
+# the time was 0.16 MiB across 219 keys -- the other 2 GiB was pure history.
+#
+# Measured steady-state load (2026-07-31, all 217 mon points live): 217
+# revisions/s -- one per point per second -- and the backend grows ~11.7 MiB per
+# minute, i.e. ~700 MiB per hour of retained history.  So retention directly
+# sets the steady-state DB size:
+#     30m -> ~390k revisions, ~350 MiB      1h -> ~780k revisions, ~700 MiB
+# 30m is the compromise: comfortably inside the quota, while still leaving a
+# watcher half an hour to resync before it gets "required revision has been
+# compacted".  That matters because etcd2db does NOT recover from a broken
+# watch -- it keeps reporting active while silently forwarding nothing.
+#
+# NOTE: compaction reclaims space *logically*; the bbolt file never shrinks on
+# its own.  It plateaus at the high-water mark, so an occasional
+# `etcdctl defrag` (with --command-timeout well above the 5s default) is the
+# only way to give the disk space back.
+COMPACT_RETENTION=30m
+QUOTA_BYTES=8589934592          # 8 GiB (default is 2 GiB)
+
 # exec: replace the shell so systemd supervises etcd directly.  The original
 # script trailed an `if [[ "$?" == 0 ]]; then while true; do sleep 60; done; fi`
 # block, which meant a clean daemon exit left the wrapper sleeping forever --
@@ -46,4 +73,7 @@ exec "$ETCD" \
     --listen-peer-urls "http://${IP}:2380" \
     --initial-advertise-peer-urls "http://${IP}:2380" \
     --initial-cluster "${NAME}=http://${IP}:2380" \
-    --initial-cluster-state new
+    --initial-cluster-state new \
+    --auto-compaction-mode periodic \
+    --auto-compaction-retention "$COMPACT_RETENTION" \
+    --quota-backend-bytes "$QUOTA_BYTES"

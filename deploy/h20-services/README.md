@@ -193,6 +193,78 @@ address with a **DHCP snippet** if you need it fixed.
 - These are 2019-era builds (etcd 3.3, InfluxDB 1.7.7, Grafana 6.2.5) with known
   CVEs. Keep them off any routable network.
 
+### etcd fills its quota in hours without auto-compaction (2026-07-31)
+
+etcd defaults to **no auto compaction**, so every update to a `/mon` key keeps
+its old revision forever. hwmc rewrites ~217 `/mon/{ant,beb}` points at about
+**217 revisions/s**, and the backend grows **~11.7 MiB/min (~700 MiB per hour of
+retained history)**. Roughly 18 hours after this host was built the backend hit
+the 2 GiB default quota, etcd raised a `NOSPACE` alarm and went **read-only**,
+and every writer in the observatory began failing with
+
+```
+grpc StatusCode.RESOURCE_EXHAUSTED
+details = "etcdserver: mvcc: database space exceeded"
+```
+
+`antmc.service` on antservice.ant.pvt was the visible casualty. Live data at the
+time was **0.16 MiB across 219 keys** — the other 2 GiB was pure history.
+
+`startEtcdServer` now sets `--auto-compaction-mode periodic
+--auto-compaction-retention 30m` and `--quota-backend-bytes 8589934592` (8 GiB).
+
+Recovering a wedged instance:
+
+```bash
+etcdctl compact $(etcdctl endpoint status -w json | jq '.[0].Status.header.revision')
+etcdctl --command-timeout=300s defrag     # 5s default timeout is NOT enough
+etcdctl alarm disarm
+```
+
+Two traps: compaction is **asynchronous**, so a defrag issued immediately after
+it reclaims almost nothing (first pass took 2027 → 695 MiB; a second pass, once
+compaction had finished, took it to **0.2 MiB**). And compaction only frees
+space *logically* — the bbolt file never shrinks by itself, so it plateaus at
+its high-water mark and only `defrag` returns space to the disk.
+
+### etcd2db dies silently when its watch breaks (2026-07-31)
+
+After an etcd restart — or any compaction past the revision it is waiting on —
+etcd2db **loses its watch and never re-establishes it**. It does not exit, does
+not log anything, and keeps reporting `active`; it simply stops forwarding, and
+its RSS climbs (1085 MiB observed, versus 17 MiB when healthy). InfluxDB just
+stops receiving points, with no error anywhere.
+
+**Always restart `etcd2db` after restarting `etcdv3`.** Check liveness with
+data, not with systemd:
+
+```bash
+influx -database dsa110 -execute 'SELECT count(*) FROM antmon WHERE time > now() - 5m'
+```
+
+### The host clock feeding all antenna data was 8 minutes fast (2026-07-31)
+
+`antservice` and `dsa110maas` are both LXC containers on the bare-metal host at
+**10.42.0.3**, and containers cannot set the clock (`CapEff: 0`), so they
+inherit the host's. That host had **one** NTP server configured,
+`192.168.23.31`, which it has **no route to** — it has no default route, only
+the directly-connected 10.40/10.41/10.42 subnets. `ntpq` showed the peer as
+`.INIT.` with `reach 0`: never contacted. The clock free-ran for 5 days and
+drifted **+494 s (~99 s/day)**.
+
+Because hwmc timestamps every monitor point from that clock, all antenna and BEB
+data landed in InfluxDB ~8 minutes **in the future**. InfluxDB 1.x implicitly
+caps `GROUP BY time()` queries at `now()`, so future-stamped points are silently
+dropped — panels looked broken or simply lagged by 8 minutes.
+
+Fixed by pointing it at three reachable stratum-2 peers on its own subnet
+(10.42.0.232 / .200 / .199, all chained to the site PPS clock) and stepping with
+`ntpd -gq` (`time set -493.927490 s`), then `hwclock -w`.
+
+⚠ Do **not** simply restore `192.168.23.31`: on hosts that *can* reach it, ntpd
+flags it as a **falseticker** (`x` in `ntpq -pn`, ~-619 s). And never configure
+a single NTP source — ntpd needs at least three to outvote a bad one.
+
 ### The host does not reliably boot unattended (2026-07-30)
 
 This machine is **legacy BIOS, not UEFI** (`/sys/firmware/efi` absent, so

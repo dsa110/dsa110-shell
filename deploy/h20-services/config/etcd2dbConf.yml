@@ -12,6 +12,16 @@ monmap:
     tablename: "antmon"
     tagnames:
       - "ant_num"
+  # Added 2026-07-31.  /mon/beb was NOT in the container-era monmap, so the 120
+  # back-end-box monitor points (if_pwr_a/b, beb_temp, lo_mon, pd_current_a/b,
+  # psu_*, beb_current_a/b) were being published to etcd by hwmc and then thrown
+  # away -- nothing ever reached InfluxDB, so no BEB panel could work.
+  # The payload carries ant_num, so tagging on it makes bebmon joinable with
+  # antmon on the same antenna.
+  /mon/beb:
+    tablename: "bebmon"
+    tagnames:
+      - "ant_num"
   /mon/cal:
     tablename: "calmon"
     tagnames:
