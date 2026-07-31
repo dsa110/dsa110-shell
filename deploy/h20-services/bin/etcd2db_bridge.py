@@ -283,10 +283,21 @@ class PrefixWatcher:
         self._watch_id = None
 
     def check(self) -> None:
-        """Re-establish the watch if it has gone quiet past the stall timeout."""
+        """Re-establish the watch if a *previously active* prefix goes quiet.
+
+        The ``self.events > 0`` guard matters. /mon/wx has no publisher at all
+        (etcdWx was never recovered) and /mon/cal only sees traffic during a
+        calibration, so both are legitimately idle for hours. Without the guard
+        the supervisor read that as a stall and re-established those two watches
+        every stall_timeout forever -- 6 reconnects each in a 10-minute soak.
+        That is not just noise: a prefix reconnecting constantly can never be
+        distinguished from one that has genuinely wedged. Idleness is only
+        evidence of a problem once we have seen the prefix deliver something.
+        """
         with self._lock:
             idle = time.time() - self.last_event
-        if idle > self.stall_timeout:
+            seen_traffic = self.events > 0
+        if seen_traffic and idle > self.stall_timeout:
             self.reconnects += 1
             LOG.warning("%s idle %.0fs (> %.0fs) — re-establishing watch "
                         "(reconnect #%d)", self.prefix, idle,
