@@ -1,0 +1,45 @@
+# Exempt SNAP-fabric traffic from netfilter connection tracking.
+#
+# 2026-07-31: running all 32 snap.py instances filled the conntrack table
+# (`nf_conntrack: table full, dropping packet` in dmesg), which produced two
+# unrelated-looking failures at once:
+#
+#   error: [Errno 1] Operation not permitted     <- UDP sendto in tftpy
+#   etcd3.exceptions.ConnectionFailedError       <- new TCP conns to etcd
+#
+# Each casperfpga register read is a TFTP transfer from a fresh ephemeral port,
+# so 32 instances create conntrack entries far faster than the 30 s UDP timeout
+# retires them. None of that traffic needs tracking: it is UDP on a flat,
+# private, non-NATed fabric.
+#
+# Connection tracking is only active here because Docker is installed (12 DOCKER
+# iptables chains) - it is otherwise unused on this host (0 containers, docker0
+# DOWN). Removing Docker would make this unit unnecessary; until then this keeps
+# the SNAP traffic out of the table.
+#
+# Rules are added idempotently with -C ... || -A so a restart cannot duplicate
+# them, and the unit is RemainAfterExit so `systemctl status` reflects reality.
+
+[Unit]
+Description=Exempt SNAP fabric (10.41.0.0/24 UDP) from conntrack
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/bash -c '\
+  for c in OUTPUT PREROUTING; do \
+    iptables -t raw -C $c -p udp -d 10.41.0.0/24 -j NOTRACK 2>/dev/null || \
+      iptables -t raw -A $c -p udp -d 10.41.0.0/24 -j NOTRACK; \
+    iptables -t raw -C $c -p udp -s 10.41.0.0/24 -j NOTRACK 2>/dev/null || \
+      iptables -t raw -A $c -p udp -s 10.41.0.0/24 -j NOTRACK; \
+  done'
+ExecStop=/bin/bash -c '\
+  for c in OUTPUT PREROUTING; do \
+    iptables -t raw -D $c -p udp -d 10.41.0.0/24 -j NOTRACK 2>/dev/null || true; \
+    iptables -t raw -D $c -p udp -s 10.41.0.0/24 -j NOTRACK 2>/dev/null || true; \
+  done'
+
+[Install]
+WantedBy=multi-user.target
