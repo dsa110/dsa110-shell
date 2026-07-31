@@ -1,16 +1,17 @@
-# Fires the etcd2db watchdog every 2 minutes.
+# Fires the etcd2db watchdog every 30 seconds.
 #
-# 2 min against the watchdog's 180 s no-data window means a wedged bridge is
-# detected and restarted within roughly 3-5 minutes, i.e. a few minutes of lost
-# monitoring instead of the ~12 hours that went missing on 2026-07-31.
+# 30 s against the watchdog's 60 s no-data window bounds a wedge to roughly
+# 60-90 s of lost monitoring. Tightened from 2 min/180 s on 2026-07-31 once
+# etcd2db turned out to wedge every ~5 min, which made detection latency the
+# dominant term in the sawtooth visible in Grafana.
 
 [Unit]
-Description=Run the etcd2db watchdog every 2 minutes
+Description=Run the etcd2db watchdog every 30 seconds
 
 [Timer]
 OnBootSec=3min
-OnUnitActiveSec=2min
-AccuracySec=15s
+OnUnitActiveSec=30s
+AccuracySec=5s
 Unit=etcd2db-watchdog.service
 
 [Install]

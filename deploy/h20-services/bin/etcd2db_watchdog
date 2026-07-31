@@ -26,7 +26,10 @@ set -uo pipefail
 DB=dsa110
 MEAS=antmon
 INFLUX=http://127.0.0.1:8086
-WINDOW=${WINDOW:-180}          # seconds with no data => considered dead
+WINDOW=${WINDOW:-60}           # seconds with no data => considered dead
+# 60 s (not 180) because etcd2db has been observed wedging ~5 min after every
+# start, so detection latency IS the visible gap in Grafana. With the timer at
+# 30 s this bounds the gap to roughly 60-90 s instead of ~3 min.
 UNIT=etcd2db.service
 
 log() { logger -t etcd2db-watchdog "$*"; echo "$(date -u +%FT%TZ) $*"; }

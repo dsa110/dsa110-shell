@@ -253,6 +253,26 @@ not log anything, and keeps reporting `active`; it simply stops forwarding, and
 its RSS climbs (1085 MiB observed, versus 17 MiB when healthy). InfluxDB just
 stops receiving points, with no error anywhere.
 
+It also wedges **roughly every 5 minutes** under the live load (217 revisions/s
+from hwmc), not just after an etcd restart. Because the watchdog needs a
+no-data window to be confident, its detection latency *is* the gap visible in
+Grafana, which showed a ~5-min-on / ~3-min-off sawtooth until the window was
+cut from 180 s to 60 s and the timer from 2 min to 30 s (bounding the gap to
+roughly 60-90 s).
+
+What the 5-minute wedge is **not**: influx living on the ZFS pool (write
+latency measured at 14.6 ms median, 31.5 ms max), mvcc auto-compaction (runs
+every 30 min, takes ~5 s), or etcd's raft snapshots -- those fire every 7 m 40 s
+while the restarts came every 8 m 04 s, and the offset between them drifted
+~23 s per cycle, so they are independent rather than causal. etcd2db logs
+nothing at all when it wedges, so the trigger is still unidentified.
+
+The durable fix is to stop depending on this binary: either reduce hwmc's
+publish cadence (217 points at 1 Hz is what makes the stream this hot), or
+replace it with a maintained bridge -- `dsa110-rt`'s
+`tools/dashboard/dsart_rt_to_influx/pusher.py` already does the same job in
+Python for the dsart mon points and could be pointed at `/mon/{ant,beb,cal}`.
+
 **Always restart `etcd2db` after restarting `etcdv3`.** Check liveness with
 data, not with systemd:
 
