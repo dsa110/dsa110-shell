@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# Watchdog for etcd2db, which cannot be trusted to keep running.
+#
+# The failure mode (observed twice on 2026-07-31): etcd2db stops forwarding
+# etcd -> InfluxDB but keeps reporting `active`.  It logs NOTHING at all, exits
+# with no error, and its RSS climbs (17 MiB healthy -> 293 MiB and 1085 MiB
+# observed) while InfluxDB simply stops receiving points.  systemd cannot detect
+# this: the process is alive, so Restart=on-failure never fires.
+#
+# The trigger appears to be a broken etcd watch -- an etcd restart, or an
+# auto-compaction past the revision the watcher is sitting on, cancels the watch
+# and this 2020-era build never re-establishes it.  etcd2db is a prebuilt Go
+# binary here (upstream source lives on git.ovro.caltech.edu), so it cannot
+# readily be fixed; detect and restart instead.
+#
+# This mirrors the pattern already used for antmc (dsa110-systemd's
+# antmc_restart.py watches /mon/ant staleness and restarts the unit).
+#
+# Liveness is judged on DATA, not on systemd state: if InfluxDB has received no
+# antmon points within the window, the bridge is dead regardless of what
+# systemctl says.
+#
+set -uo pipefail
+
+DB=dsa110
+MEAS=antmon
+INFLUX=http://127.0.0.1:8086
+WINDOW=${WINDOW:-180}          # seconds with no data => considered dead
+UNIT=etcd2db.service
+
+log() { logger -t etcd2db-watchdog "$*"; echo "$(date -u +%FT%TZ) $*"; }
+
+# If etcd itself is not serving, restarting the bridge achieves nothing and
+# would just add churn -- back off and let the next tick re-check.
+if ! curl -sS -o /dev/null --max-time 5 "$INFLUX/ping"; then
+    log "influxd not answering /ping; skipping this check"
+    exit 0
+fi
+
+count=$(curl -sS --max-time 10 -G "$INFLUX/query" \
+        --data-urlencode "db=$DB" \
+        --data-urlencode "q=SELECT count(lj_temp) FROM $MEAS WHERE time > now() - ${WINDOW}s" \
+        2>/dev/null | python3 -c '
+import json,sys
+try:
+    r = json.load(sys.stdin)["results"][0]
+    s = r.get("series")
+    print(s[0]["values"][0][1] if s else 0)
+except Exception:
+    print(-1)
+')
+
+if [ "$count" = "-1" ]; then
+    log "could not query influx; skipping this check"
+    exit 0
+fi
+
+if [ "$count" -gt 0 ]; then
+    exit 0
+fi
+
+# No data in the window. Distinguish "the bridge is wedged" from "nothing is
+# being published upstream" -- if etcd has no fresh mon points either, the fault
+# is upstream (hwmc/antmc) and restarting etcd2db would be pointless churn.
+fresh=$(ETCDCTL_API=3 /home/ubuntu/proj/godev/src/github.com/etcd-io/etcd/bin/etcdctl \
+        --endpoints=127.0.0.1:2379 --command-timeout=10s get --prefix /mon/ant -w json 2>/dev/null | python3 -c '
+import json,sys,base64,time
+try:
+    d=json.load(sys.stdin); now=40587.0+time.time()/86400.0
+    n=0
+    for kv in d.get("kvs",[]):
+        try: v=json.loads(base64.b64decode(kv.get("value","")) or b"{}")
+        except Exception: continue
+        t=v.get("time")
+        if isinstance(t,(int,float)) and (now-t)*86400.0 < 180: n+=1
+    print(n)
+except Exception:
+    print(-1)
+')
+
+if [ "${fresh:-0}" -le 0 ]; then
+    log "no antmon data in ${WINDOW}s AND no fresh /mon/ant in etcd (fresh=$fresh) -- fault is upstream, not restarting $UNIT"
+    exit 0
+fi
+
+log "no antmon data in ${WINDOW}s but $fresh fresh /mon/ant keys in etcd -- bridge is wedged, restarting $UNIT"
+systemctl restart "$UNIT"

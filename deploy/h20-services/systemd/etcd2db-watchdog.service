@@ -1,0 +1,16 @@
+# Restarts etcd2db when it has silently stopped forwarding.
+#
+# See bin/etcd2db_watchdog for the full rationale. Short version: etcd2db stops
+# bridging etcd -> InfluxDB but keeps reporting active, logs nothing, and leaks
+# memory, so systemd's own Restart= can never notice. The watchdog judges
+# liveness on whether InfluxDB is actually receiving points.
+#
+# Runs as root (not User=ubuntu) because it calls `systemctl restart`.
+
+[Unit]
+Description=Watchdog for etcd2db (restarts it when it silently stops forwarding)
+After=influxdb.service etcd2db.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/ubuntu/bin/etcd2db_watchdog

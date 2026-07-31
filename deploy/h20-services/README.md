@@ -227,6 +227,24 @@ compaction had finished, took it to **0.2 MiB**). And compaction only frees
 space *logically* — the bbolt file never shrinks by itself, so it plateaus at
 its high-water mark and only `defrag` returns space to the disk.
 
+### etcd2db watchdog
+
+Because of the silent-death mode below, `etcd2db-watchdog.timer` runs
+`bin/etcd2db_watchdog` every 2 minutes. It judges liveness on **data** — has
+InfluxDB received any `antmon` points in the last 180 s — not on systemd state,
+which is always `active` even when the bridge is wedged.
+
+It also distinguishes a wedged bridge from an upstream outage: if etcd has no
+fresh `/mon/ant` keys either, the fault is hwmc's and restarting etcd2db would be
+pointless churn, so it does nothing and says so. Install:
+
+```bash
+install -m 755 bin/etcd2db_watchdog /home/ubuntu/bin/
+install -m 644 systemd/etcd2db-watchdog.{service,timer} /etc/systemd/system/
+systemctl daemon-reload && systemctl enable --now etcd2db-watchdog.timer
+journalctl -t etcd2db-watchdog          # its decisions
+```
+
 ### etcd2db dies silently when its watch breaks (2026-07-31)
 
 After an etcd restart — or any compaction past the revision it is waiting on —

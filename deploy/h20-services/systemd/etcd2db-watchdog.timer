@@ -1,0 +1,17 @@
+# Fires the etcd2db watchdog every 2 minutes.
+#
+# 2 min against the watchdog's 180 s no-data window means a wedged bridge is
+# detected and restarted within roughly 3-5 minutes, i.e. a few minutes of lost
+# monitoring instead of the ~12 hours that went missing on 2026-07-31.
+
+[Unit]
+Description=Run the etcd2db watchdog every 2 minutes
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=2min
+AccuracySec=15s
+Unit=etcd2db-watchdog.service
+
+[Install]
+WantedBy=timers.target
