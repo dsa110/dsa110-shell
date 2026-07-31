@@ -41,6 +41,15 @@ wait_for_port() {
 wait_for_port 127.0.0.1 2379 etcd
 wait_for_port 127.0.0.1 8086 influxd
 
+# 2026-07-31: now runs the Python bridge instead of the prebuilt Go ./etcd2db.
+# The Go binary stopped forwarding every 2-3 minutes while still reporting
+# active and logging nothing; an independent python-etcd3 watcher on the same
+# prefix proved etcd itself was fine (270 s continuous at 97 events/s, and
+# etcd's slow_watcher_total/pending_events were both 0). The bridge reads the
+# SAME etcdConfig.yml + etcd2dbConf.yml from this directory, so the monmap
+# remains the single source of truth and the influx measurements are unchanged.
+# The old binary is still here as ./etcd2db if it is ever needed.
 cd /home/ubuntu/proj/etcd2db
 export ETCDCTL_API=3
-exec ./etcd2db
+exec /home/ubuntu/anaconda3/envs/casa38/bin/python3 \
+    /home/ubuntu/bin/etcd2db_bridge.py
